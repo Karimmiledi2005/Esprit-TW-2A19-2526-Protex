@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Vous avez gagné ! - Protex</title></head>
+<body style="margin:0;padding:0;background:#f4f6fb;font-family:Arial,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6fb;padding:30px 0;">
+    <tr><td align="center">
+
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.08);">
+
+        <!-- Header festif -->
+        <tr>
+            <td style="background:linear-gradient(135deg,#FF6B1A 0%,#ffa050 100%);padding:40px 40px 30px;text-align:center;">
+                <div style="font-size:60px;margin-bottom:8px;">🎉</div>
+                <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:800;letter-spacing:-0.3px;">Félicitations !</h1>
+                <p style="margin:10px 0 0;color:rgba(255,255,255,0.95);font-size:15px;font-weight:600;">Vous avez gagné un cadeau Protex 🎁</p>
+            </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+            <td style="padding:40px;">
+
+                <p style="margin:0 0 18px;color:#1a1a1a;font-size:16px;line-height:1.6;">
+                    Bonjour <strong>{{CLIENT_NOM}}</strong>,
+                </p>
+
+                <p style="margin:0 0 22px;color:#4a5568;font-size:15px;line-height:1.7;">
+                    Bravo ! Grâce à votre fidélité, vous avez débloqué le palier
+                    <span style="display:inline-block;padding:3px 10px;background:{{PALIER_BG}};color:{{PALIER_COLOR}};border-radius:999px;font-weight:700;font-size:13px;border:1px solid {{PALIER_COLOR}}33;">{{PALIER_LABEL}}</span>
+                    et tourné notre roulette de fidélité 🎰
+                </p>
+
+                <!-- Cadeau gagné -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#FF6B1A,#ff8c42);border-radius:18px;margin:24px 0;">
+                    <tr>
+                        <td style="padding:30px 24px;text-align:center;">
+                            <div style="font-size:55px;margin-bottom:10px;">{{CADEAU_ICONE}}</div>
+                            <div style="color:#ffffff;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:2px;opacity:0.9;margin-bottom:8px;">Votre récompense</div>
+                            <div style="color:#ffffff;font-size:30px;font-weight:800;line-height:1.2;">{{CADEAU_LABEL}}</div>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Code promo -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb;border:2px dashed #f59e0b;border-radius:14px;margin:24px 0;">
+                    <tr>
+                        <td style="padding:22px 20px;text-align:center;">
+                            <div style="color:#78350f;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;">
+                                🎫 Votre code promo unique
+                            </div>
+                            <div style="font-family:'Courier New',monospace;background:#fff;color:#78350f;font-size:22px;font-weight:800;padding:14px 18px;border-radius:10px;letter-spacing:1.5px;border:2px solid #f59e0b;display:inline-block;">
+                                {{CODE_PROMO}}
+                            </div>
+                            <p style="margin:12px 0 0;color:#92400e;font-size:13px;">
+                                ⚠️ Code valable une seule fois — copiez-le bien !
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Comment l'utiliser -->
+                <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:16px 20px;border-radius:8px;margin:24px 0;">
+                    <p style="margin:0 0 8px;color:#065f46;font-size:14px;font-weight:700;">💡 Comment l'utiliser ?</p>
+                    <p style="margin:0;color:#065f46;font-size:13px;line-height:1.6;">
+                        Lors de votre prochain paiement Protex, saisissez ce code dans le champ "Code promo"
+                        pour bénéficier de votre récompense. C'est aussi simple que ça !
+                    </p>
+                </div>
+
+                <p style="margin:22px 0 0;color:#4a5568;font-size:15px;line-height:1.7;">
+                    Continuez à payer vos cotisations pour débloquer les paliers <strong>Argent 🥈</strong>
+                    et <strong>Or 🥇</strong> — avec encore plus de cadeaux à la clé ! 🎁
+                </p>
+
+                <!-- CTA -->
+                <table cellpadding="0" cellspacing="0" style="margin:30px 0 10px;">
+                    <tr>
+                        <td style="background:linear-gradient(135deg,#FF6B1A,#ff8c42);border-radius:12px;">
+                            <a href="http://localhost:8081/projet_web1/gestion_paiment_offre/view/FrontOffice/client.html"
+                               style="display:inline-block;padding:14px 28px;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;">
+                                🏠 Retour à mon espace client
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="margin:30px 0 0;color:#94a3b8;font-size:13px;line-height:1.6;text-align:center;">
+                    Merci pour votre fidélité,<br>
+                    <strong style="color:#1A3A7A;">L'équipe Protex Assurance</strong>
+                </p>
+
+            </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+            <td style="background:#0e1c33;padding:24px 40px;text-align:center;">
+                <p style="margin:0;color:#cbd5e1;font-size:12px;">
+                    📍 Tunis, Tunisie &nbsp;|&nbsp; 📞 +216 70 000 000 &nbsp;|&nbsp; ✉️ contact@protex.tn
+                </p>
+                <p style="margin:8px 0 0;color:#64748b;font-size:11px;">
+                    © {{ANNEE}} Protex Assurance — Email envoyé le {{DATE_ENVOI}}
+                </p>
+            </td>
+        </tr>
+
+    </table>
+
+    </td></tr>
+</table>
+
+</body>
+</html>

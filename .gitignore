@@ -1,0 +1,100 @@
+# ══════════════════════════════════════════
+# .gitignore - Protex Assurance - ESPRIT 2025
+# ══════════════════════════════════════════
+
+# - CONFIGURATION SENSIBLE (NE JAMAIS COMMITTER) ----------
+config.env.php
+config.env.local.php
+config_services.php
+controller/stripe_config.php
+.env
+.env.local
+*.env
+
+# - DEPENDANCES PHP ----------------------------------------
+vendor/
+composer.phar
+composer.lock
+
+# - DEPENDANCES PYTHON -------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+*.egg-info/
+
+# - MODELES IA (trop lourds pour Git) -----------------------
+face_api/models/
+face_api/training_data/
+face_api/*.pkl
+face_api/*.yml
+*.pkl
+*.h5
+*.pb
+*.onnx
+*.npy
+
+# - UPLOADS UTILISATEURS (donnees privees) -----------------
+uploads/avatars/*
+uploads/sinistres/*
+uploads/reseau/*
+uploads/stories/*
+uploads/cin/*
+!uploads/avatars/.gitkeep
+!uploads/sinistres/.gitkeep
+!uploads/reseau/.gitkeep
+!uploads/stories/.gitkeep
+
+# - LOGS ----------------------------------------------------
+logs/*.log
+view/email/logs/
+*.log
+ocr_log.txt
+error_log
+
+# - FICHIERS DE DEBUG / SEED --------------------------------
+_count_rows.php
+_inspect_db.php
+run_counts.php
+run_verify.php
+generate_seed_with_hash.php
+add_final_users.php
+protex_full_seed.sql
+protex_seed_data.sql
+seed_extra.sql
+scratch/
+debug_*.php
+test_*.php
+tmp_schema.php
+fix_fks.php
+desc_table.php
+demo_mode.php
+run_mig*.php
+check_db.php
+check_schema.php
+list_tables.php
+update_enum.php
+
+# - PHPUNIT CACHE ------------------------------------------
+.phpunit.cache/
+
+# - LIB MANAGE PAR COMPOSER (deja dans vendor/) ------------
+lib/PHPMailer/
+
+# - EDITEURS / IDEs ----------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*.suo
+.vs/
+
+# - OS ------------------------------------------------------
+.DS_Store
+.DS_Store?
+Thumbs.db
+desktop.ini
+ehthumbs.db

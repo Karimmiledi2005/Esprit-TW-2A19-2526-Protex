@@ -1,0 +1,122 @@
+/* =============================================
+   variables.css — Protex Design System
+   Tokens globaux partagés par toutes les pages
+   ============================================= */
+
+:root {
+    /* ===== COULEURS PRINCIPALES ===== */
+    --navy:         #ffffff;
+    --navy-mid:     #f8f9ff;
+    --navy-soft:    #f0f4ff;
+    --accent:       #FF6B1A;
+    --accent-dark:  #e05a0f;
+    --accent-glow:  rgba(255, 107, 26, 0.15);
+
+    /* ===== ORBS ===== */
+    --orb-emerald:  #1A3A7A;
+    --orb-gold:     #FF6B1A;
+    --orb-coral:    #e05a0f;
+
+    /* ===== GLASS ===== */
+    --glass-bg:     rgba(26, 58, 122, 0.04);
+    --glass-border: rgba(26, 58, 122, 0.10);
+    --glass-hover:  rgba(26, 58, 122, 0.07);
+
+    /* ===== BACKGROUND GRADIENT ===== */
+    --bg-gradient-1: #ffffff;
+    --bg-gradient-2: #f0f4ff;
+    --bg-gradient-3: #FF6B1A;
+
+    /* ===== COULEURS SÉMANTIQUES ===== */
+    --gold:         #FF6B1A;
+    --success:      #1A3A7A;
+    --warning:      #FF6B1A;
+    --danger:       #e63946;
+
+    /* ===== TEXTE ===== */
+    --text-primary:   #15233C;
+    --text-secondary: rgba(21, 35, 60, 0.55);
+
+    /* ===== COMPOSANTS ===== */
+    --card-bg:      rgba(26, 58, 122, 0.04);
+    --border:       rgba(26, 58, 122, 0.10);
+
+    /* ===== LAYOUT ===== */
+    --sidebar-w:    260px;
+
+    /* ===== TYPOGRAPHIE ===== */
+    --font-display: 'Sora', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+
+    /* ===== SPACING ===== */
+    --radius-sm:    8px;
+    --radius-md:    12px;
+    --radius-lg:    16px;
+    --radius-xl:    20px;
+
+    /* ===== TRANSITIONS ===== */
+    --transition:   all 0.2s ease;
+}
+
+/* ===== BACKGROUND LIGHT ===== */
+.background {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 50%, #fff5f0 100%) !important;
+}
+
+.orb-1 { background: radial-gradient(circle, rgba(255,107,26,0.10), transparent 70%) !important; }
+.orb-2 { background: radial-gradient(circle, rgba(26,58,122,0.08), transparent 70%) !important; }
+.orb-3 { background: radial-gradient(circle, rgba(255,107,26,0.06), transparent 70%) !important; }
+
+/* ===== Inputs stylisés ===== */
+.info-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.info-item label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.info-item input[type="password"],
+.info-item input[type="text"] {
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.info-item input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 6px var(--accent-glow);
+    outline: none;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.input-group button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.input-group button:hover {
+    border-color: var(--accent);
+    background: var(--glass-hover);
+}

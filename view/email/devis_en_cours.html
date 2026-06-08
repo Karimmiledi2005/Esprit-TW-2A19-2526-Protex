@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Devis en cours - Protex</title></head>
+<body style="margin:0;padding:0;background:#f4f6fb;font-family:Arial,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6fb;padding:30px 0;">
+    <tr><td align="center">
+
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.08);">
+
+        <tr>
+            <td style="background:linear-gradient(135deg,#0dcaf0 0%,#0891b2 100%);padding:35px 40px;text-align:center;">
+                <div style="font-size:42px;margin-bottom:8px;">🔄</div>
+                <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:800;">Votre devis est en cours</h1>
+                <p style="margin:8px 0 0;color:rgba(255,255,255,0.9);font-size:14px;">Protex Assurance — Référence : <strong>{{REFERENCE}}</strong></p>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding:40px;">
+
+                <p style="margin:0 0 18px;color:#1a1a1a;font-size:16px;line-height:1.6;">
+                    Bonjour <strong>{{CLIENT_NOM}}</strong>,
+                </p>
+
+                <p style="margin:0 0 22px;color:#4a5568;font-size:15px;line-height:1.7;">
+                    Bonne nouvelle ! Votre demande de devis pour <strong>{{TYPE_ASSURANCE}}</strong> est désormais
+                    <strong style="color:#0891b2;">en cours de traitement</strong> par notre équipe d'experts. ⏳
+                </p>
+
+                <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0;margin:20px 0;">
+                    <tr>
+                        <td style="padding:22px 24px;">
+                            <table width="100%" cellpadding="6" cellspacing="0">
+                                <tr>
+                                    <td style="color:#64748b;font-size:13px;font-weight:600;width:160px;">Référence</td>
+                                    <td style="color:#0f172a;font-size:14px;font-weight:700;">{{REFERENCE}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:#64748b;font-size:13px;font-weight:600;">Type d'assurance</td>
+                                    <td style="color:#0f172a;font-size:14px;font-weight:700;">{{TYPE_ASSURANCE}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:#64748b;font-size:13px;font-weight:600;">Statut actuel</td>
+                                    <td>
+                                        <span style="display:inline-block;padding:5px 12px;background:#cffafe;color:#155e75;border-radius:999px;font-size:12px;font-weight:700;">
+                                            {{STATUT}}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <div style="background:#ecfeff;border-left:4px solid #0dcaf0;padding:16px 20px;border-radius:8px;margin:22px 0;">
+                    <p style="margin:0 0 6px;color:#0c4a6e;font-size:13px;font-weight:700;">💬 Message de notre équipe</p>
+                    <p style="margin:0;color:#0c4a6e;font-size:14px;line-height:1.6;">{{REPONSE_ADMIN}}</p>
+                </div>
+
+                <p style="margin:22px 0;color:#4a5568;font-size:15px;line-height:1.7;">
+                    Nous reviendrons vers vous très prochainement avec une réponse définitive.
+                    Vous pouvez suivre l'évolution depuis votre espace client.
+                </p>
+
+                <p style="margin:30px 0 0;color:#94a3b8;font-size:13px;line-height:1.6;text-align:center;">
+                    Merci pour votre patience,<br>
+                    <strong style="color:#1A3A7A;">L'équipe Protex Assurance</strong>
+                </p>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td style="background:#0e1c33;padding:24px 40px;text-align:center;">
+                <p style="margin:0;color:#cbd5e1;font-size:12px;">
+                    📍 Tunis, Tunisie &nbsp;|&nbsp; 📞 +216 70 000 000 &nbsp;|&nbsp; ✉️ contact@protex.tn
+                </p>
+                <p style="margin:8px 0 0;color:#64748b;font-size:11px;">
+                    © {{ANNEE}} Protex Assurance — Email envoyé le {{DATE_ENVOI}}
+                </p>
+            </td>
+        </tr>
+
+    </table>
+
+    </td></tr>
+</table>
+
+</body>
+</html>

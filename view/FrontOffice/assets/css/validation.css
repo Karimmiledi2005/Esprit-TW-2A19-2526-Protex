@@ -1,0 +1,59 @@
+/* =============================================
+   validation.css — Styles pour la validation de formulaires
+   ============================================= */
+
+.form-control.input-error {
+    border-color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.05) !important;
+}
+
+.form-control.input-valid {
+    border-color: #10b981 !important;
+    background-color: rgba(16, 185, 129, 0.05) !important;
+}
+
+.field-error {
+    color: #ef4444;
+    font-size: 11px;
+    margin-top: 4px;
+    display: block;
+    animation: fadeInDown 0.3s ease-out;
+}
+
+.char-counter {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-align: right;
+    margin-top: 2px;
+}
+
+.voice-input-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.btn-voice {
+    background: rgba(255, 107, 26, 0.1);
+    border: 1px solid rgba(255, 107, 26, 0.2);
+    color: #FF6B1A;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-voice:hover {
+    background: rgba(255, 107, 26, 0.2);
+}
+
+.btn-voice.listening {
+    background: #FF6B1A;
+    color: white;
+    animation: pulse 1.5s infinite;
+}

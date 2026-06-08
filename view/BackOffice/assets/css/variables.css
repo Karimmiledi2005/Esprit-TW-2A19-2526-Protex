@@ -1,0 +1,112 @@
+/* =============================================
+   variables.css — Protex Design System
+   Tokens globaux partagés par toutes les pages
+   ============================================= */
+
+:root {
+    /* ===== COULEURS PRINCIPALES ===== */
+    --navy:         #0A1931;
+    --navy-mid:     #001F3F;
+    --navy-soft:    #0d2845;
+    --accent:       #00b4d8;
+    --accent-dark:  #0096c7;
+    --accent-glow:  rgba(0, 180, 216, 0.15);
+
+    /* ===== ORBS (glassmorphism template) ===== */
+    --orb-emerald:  #059669;
+    --orb-gold:     #d4a574;
+    --orb-coral:    #e07a5f;
+
+    /* ===== GLASS ===== */
+    --glass-bg:     rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.10);
+    --glass-hover:  rgba(255, 255, 255, 0.08);
+
+    /* ===== BACKGROUND GRADIENT ===== */
+    --bg-gradient-1: #0A1931;   /* deep navy */
+    --bg-gradient-2: #001F3F;   /* navy */
+    --bg-gradient-3: #FF8C00;   /* dark orange accent */
+
+    /* ===== COULEURS SÉMANTIQUES ===== */
+    --gold:         #f4a261;
+    --success:      #2ec4b6;
+    --warning:      #eab308;
+    --danger:       #e63946;
+
+    /* ===== TEXTE ===== */
+    --text-primary:   #f5f5f4;
+    --text-secondary: rgba(245, 245, 244, 0.70);
+
+    /* ===== COMPOSANTS ===== */
+    --card-bg:      rgba(255, 255, 255, 0.05);
+    --border:       rgba(255, 255, 255, 0.10);
+
+    /* ===== LAYOUT ===== */
+    --sidebar-w:    260px;
+
+    /* ===== TYPOGRAPHIE ===== */
+    --font-display: 'Sora', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+
+    /* ===== SPACING ===== */
+    --radius-sm:    8px;
+    --radius-md:    12px;
+    --radius-lg:    16px;
+    --radius-xl:    20px;
+
+    /* ===== TRANSITIONS ===== */
+    --transition:   all 0.2s ease;
+}
+/* ===== Inputs stylisés ===== */
+.info-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.info-item label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.info-item input[type="password"],
+.info-item input[type="text"] {
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.info-item input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 6px var(--accent-glow);
+    outline: none;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.input-group button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.input-group button:hover {
+    border-color: var(--accent);
+    background: var(--glass-hover);
+}

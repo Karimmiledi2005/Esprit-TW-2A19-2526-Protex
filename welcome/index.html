@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <title>Protex — Digital Insurance Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Protex — plateforme d'assurance digitale. Plans flexibles, service de confiance."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link href="css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="lib/animate/animate.min.css" rel="stylesheet"/>
+  <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet"/>
+  <style>
+    :root{
+      --navy:#0D1B2A;--navy-mid:#112240;--primary:#1A3A7A;--primary-light:#2451a3;
+      --primary-glow:rgba(26,58,122,.13);--secondary:#F4A261;--secondary-dark:#e08944;
+      --teal:#2EC4B6;--danger:#e63946;--surface:#fff;--surface-soft:#f7f9fc;
+      --text-primary:#0D1B2A;--text-secondary:#4a5568;--text-muted:#8da9c4;
+      --border:rgba(26,58,122,.12);
+      --shadow-sm:0 2px 8px rgba(13,27,42,.08);--shadow-md:0 8px 24px rgba(13,27,42,.10);
+      --shadow-lg:0 20px 48px rgba(13,27,42,.13);--shadow-glow:0 0 32px rgba(26,58,122,.18);
+      --font-display:'Sora',sans-serif;--font-body:'DM Sans',sans-serif;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;--radius-full:999px;
+      --ease:cubic-bezier(.4,0,.2,1);
+      --transition:all .25s cubic-bezier(.4,0,.2,1);
+      --transition-slow:all .4s cubic-bezier(.4,0,.2,1);
+    }
+    *,*::before,*::after{box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{font-family:var(--font-body);font-size:16px;line-height:1.65;color:var(--text-primary);background:var(--surface);overflow-x:hidden;}
+    h1,h2,h3,h4,h5,h6{font-family:var(--font-display);font-weight:700;line-height:1.25;color:var(--navy);}
+    :focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:4px;}
+    ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--surface-soft);}::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:3px;}
+
+    /* Spinner */
+    #spinner{opacity:0;visibility:hidden;transition:opacity .4s ease,visibility 0s linear .4s;z-index:99999;}
+    #spinner.show{transition:opacity .4s ease,visibility 0s;visibility:visible;opacity:1;}
+
+    /* Back to top */
+    .back-to-top{position:fixed;right:28px;bottom:28px;z-index:99;width:44px;height:44px;border-radius:var(--radius-md);background:var(--primary);color:white;border:none;box-shadow:var(--shadow-md);transition:var(--transition);display:none;align-items:center;justify-content:center;}
+    .back-to-top:hover{background:var(--primary-light);transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+
+    /* Buttons */
+    .btn{font-family:var(--font-body);font-weight:600;letter-spacing:.01em;transition:var(--transition);cursor:pointer;border-radius:var(--radius-sm);}
+    .btn:active{transform:scale(.97);}
+    .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+    .btn-primary:hover,.btn-primary:focus{background:var(--primary-light);border-color:var(--primary-light);color:#fff;box-shadow:var(--shadow-glow);transform:translateY(-1px);}
+    .btn-secondary{background:var(--secondary);border-color:var(--secondary);color:#fff;}
+    .btn-secondary:hover{background:var(--secondary-dark);border-color:var(--secondary-dark);color:#fff;transform:translateY(-1px);box-shadow:0 8px 20px rgba(244,162,97,.35);}
+    .btn-light{background:var(--surface-soft);border-color:var(--border);color:var(--primary);}
+    .btn-light:hover{background:var(--primary);color:white;border-color:var(--primary);transform:translateY(-1px);}
+    .btn-square{width:44px;height:44px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-sm);}
+    .btn-sm-square{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;}
+    .btn-lg-square{width:52px;height:52px;padding:0;display:inline-flex;align-items:center;justify-content:center;}
+
+    /* Topbar */
+    .topbar{background:var(--navy);padding:10px 0;font-size:13.5px;}
+    .topbar .topbar-info{display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+    .topbar .topbar-info a,.topbar .topbar-info span{color:rgba(255,255,255,.70);display:flex;align-items:center;gap:6px;transition:var(--transition);text-decoration:none;}
+    .topbar .topbar-info a:hover{color:var(--secondary);}
+    .topbar .topbar-social a{color:rgba(255,255,255,.55);margin-left:14px;font-size:14px;transition:var(--transition);width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;}
+    .topbar .topbar-social a:hover{color:white;background:rgba(255,255,255,.12);}
+
+    /* Navbar */
+    .navbar{background:rgba(255,255,255,.97)!important;backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 0;transition:var(--transition-slow);}
+    .navbar-brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+    .brand-logo-video{width:48px;height:48px;object-fit:cover;border-radius:var(--radius-sm);box-shadow:var(--shadow-sm);transition:var(--transition);}
+    .navbar-brand:hover .brand-logo-video{transform:scale(1.05);box-shadow:var(--shadow-md);}
+
+    .navbar-brand .brand-name{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--primary);letter-spacing:-.02em;}
+    .navbar-brand .brand-name span{color:var(--secondary);}
+    .navbar .navbar-nav .nav-link{font-family:var(--font-body);font-weight:500;color:var(--text-secondary);padding:8px 16px;border-radius:var(--radius-sm);transition:var(--transition);cursor:pointer;}
+    .navbar .navbar-nav .nav-link:hover,.navbar .navbar-nav .nav-link.active{color:var(--primary);background:var(--primary-glow);}
+    .navbar .dropdown-menu{border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);padding:8px;background:white;}
+    .navbar .dropdown-item{border-radius:var(--radius-sm);padding:9px 14px;font-weight:500;color:var(--text-secondary);transition:var(--transition);cursor:pointer;}
+    .navbar .dropdown-item:hover{background:var(--primary-glow);color:var(--primary);}
+    .navbar .dropdown-toggle::after{border:none;content:"\f107";font-family:"Font Awesome 6 Free";font-weight:900;vertical-align:middle;margin-left:5px;font-size:11px;}
+    @media(min-width:992px){.navbar .nav-item .dropdown-menu{display:block;margin-top:0;top:130%;opacity:0;visibility:hidden;transition:var(--transition);pointer-events:none;}.navbar .nav-item:hover .dropdown-menu{top:100%;visibility:visible;opacity:1;pointer-events:all;}}
+    @media(max-width:991.98px){.navbar .navbar-nav{padding:16px 0;}.navbar .nav-item .dropdown-menu{box-shadow:none;border:none;background:var(--surface-soft);}}
+
+    /* ══ 3D HERO ══ */
+    .hero-3d{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;background:var(--navy);}
+    #three-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;}
+    .hero-3d::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 65% at 72% 50%,rgba(26,58,122,.18) 0%,transparent 70%),linear-gradient(180deg,rgba(13,27,42,.1) 0%,rgba(13,27,42,.5) 80%,var(--navy) 100%);z-index:1;pointer-events:none;}
+    .hero-inner{position:relative;z-index:2;width:100%;max-width:1200px;margin:0 auto;padding:140px 48px 80px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+    @media(max-width:991px){.hero-inner{grid-template-columns:1fr;padding:120px 24px 60px;}.hero-right-3d{display:none;}}
+
+    .hero-badge-3d{display:inline-flex;align-items:center;gap:8px;background:rgba(244,162,97,.15);border:1px solid rgba(244,162,97,.3);color:var(--secondary);padding:7px 16px;border-radius:var(--radius-full);font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:22px;animation:fadeInDown .6s var(--ease) both;}
+    .hero-title-3d{font-family:var(--font-display);font-size:clamp(2.2rem,4.5vw,3.6rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;color:white;margin-bottom:18px;animation:fadeInUp .7s .1s var(--ease) both;}
+    .hero-title-3d .accent{color:var(--secondary);}
+    .hero-title-3d .accent-t{color:var(--teal);}
+    .hero-subtitle-3d{font-size:1.05rem;line-height:1.75;color:rgba(255,255,255,.72);max-width:460px;margin-bottom:34px;animation:fadeInUp .7s .2s var(--ease) both;}
+    .hero-ctas-3d{display:flex;gap:14px;flex-wrap:wrap;animation:fadeInUp .7s .3s var(--ease) both;}
+
+    .btn-gold-3d{display:inline-flex;align-items:center;gap:9px;background:var(--secondary);color:var(--navy);padding:14px 28px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;transition:all .25s var(--ease);box-shadow:0 8px 24px rgba(244,162,97,.35),inset 0 1px 0 rgba(255,255,255,.3);position:relative;overflow:hidden;}
+    .btn-gold-3d::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transition:left .5s var(--ease);}
+    .btn-gold-3d:hover::before{left:100%;}
+    .btn-gold-3d:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 14px 32px rgba(244,162,97,.45);color:var(--navy);}
+    .btn-glass-3d{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.08);color:white;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px);transition:all .25s var(--ease);}
+    .btn-glass-3d:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateY(-2px);color:white;}
+
+    .hero-trust-pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:36px;animation:fadeInUp .7s .4s var(--ease) both;}
+    .trust-pill-3d{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:7px 13px;border-radius:var(--radius-full);font-size:13px;font-weight:500;color:rgba(255,255,255,.8);backdrop-filter:blur(8px);}
+    .trust-pill-3d i{color:var(--secondary);font-size:12px;}
+
+    /* Shield right */
+    .hero-right-3d{display:flex;align-items:center;justify-content:center;animation:fadeInRight .8s .2s var(--ease) both;}
+    .shield-wrap{position:relative;width:300px;height:340px;}
+    #shield-canvas{width:100%;height:100%;}
+    .float-stat{position:absolute;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(16px);border-radius:14px;padding:13px 17px;min-width:128px;}
+    .float-stat .fs-num{font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--secondary);line-height:1;}
+    .float-stat .fs-lbl{font-size:11px;color:rgba(255,255,255,.58);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+    .float-stat:nth-child(2){top:14px;right:-16px;animation:floatA 4s ease-in-out infinite;}
+    .float-stat:nth-child(3){bottom:36px;left:-26px;animation:floatB 4.5s ease-in-out infinite;}
+    .float-stat:nth-child(4){top:50%;left:-44px;transform:translateY(-50%);animation:floatA 5s ease-in-out infinite;}
+    @keyframes floatA{0%,100%{transform:translateY(0);}50%{transform:translateY(-11px);}}
+    @keyframes floatB{0%,100%{transform:translateY(0);}50%{transform:translateY(10px);}}
+
+    /* Trust bar */
+    .hero-trust-bar{background:white;border-bottom:1px solid var(--border);padding:14px 0;box-shadow:var(--shadow-sm);}
+    .trust-item{display:flex;align-items:center;gap:10px;padding:0 24px;border-right:1px solid var(--border);}
+    .trust-item:last-child{border-right:none;}
+    .trust-item i{color:var(--primary);font-size:20px;}
+    .trust-item .trust-text{font-size:13px;color:var(--text-secondary);}
+    .trust-item .trust-text strong{color:var(--navy);font-weight:700;display:block;}
+    @media(max-width:767px){.trust-item{border-right:none;border-bottom:1px solid var(--border);padding:10px 0;}}
+
+    /* Section utils */
+    .section-badge{display:inline-flex;align-items:center;gap:6px;background:var(--primary-glow);color:var(--primary);padding:6px 16px;border-radius:var(--radius-full);font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;}
+    .section-title{font-family:var(--font-display);font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;color:var(--navy);letter-spacing:-.02em;line-height:1.2;}
+    .section-subtitle{color:var(--text-secondary);font-size:1rem;max-width:520px;line-height:1.7;}
+
+    /* About */
+    .about-section{padding:80px 0;}
+    .about-img-wrap{position:relative;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);}
+    .about-img-wrap img{width:100%;height:420px;object-fit:cover;display:block;}
+    .about-badge{position:absolute;top:24px;left:24px;background:var(--primary);color:white;border-radius:var(--radius-lg);padding:20px;text-align:center;min-width:110px;box-shadow:var(--shadow-md);}
+    .about-badge .badge-num{font-family:var(--font-display);font-size:2.4rem;font-weight:800;line-height:1;color:white;}
+    .about-badge .badge-unit{font-size:.85rem;color:rgba(255,255,255,.8);font-weight:600;}
+    .about-badge .badge-label{font-size:.78rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.05em;}
+    .about-feature{display:flex;align-items:center;gap:14px;padding:16px;background:var(--surface-soft);border:1px solid var(--border);border-radius:var(--radius-md);transition:var(--transition);}
+    .about-feature:hover{border-color:var(--primary);box-shadow:var(--shadow-sm);transform:translateY(-2px);}
+    .about-feature .feature-icon{width:44px;height:44px;background:var(--primary-glow);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .about-feature .feature-icon i{color:var(--primary);font-size:18px;}
+    .about-feature .feature-text{font-weight:600;color:var(--navy);font-size:14.5px;}
+    .about-cta{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--primary-glow);border:1px solid var(--border);border-radius:var(--radius-md);margin-top:24px;}
+    .about-cta img{width:48px;height:48px;border-radius:50%;object-fit:cover;}
+    .about-cta .cta-text{font-weight:700;color:var(--navy);}
+    .about-cta .cta-text span{color:var(--primary);}
+
+    /* Facts */
+    .facts-section{overflow:hidden;margin:40px 0;}
+    .facts-text{background:linear-gradient(135deg,var(--primary) 0%,var(--navy-mid) 100%);padding:72px 48px;}
+    .facts-text h2{font-family:var(--font-display);font-size:2rem;font-weight:800;color:white;margin-bottom:16px;}
+    .facts-text p{color:rgba(255,255,255,.80);margin-bottom:32px;}
+    .facts-counter{background:var(--surface-soft);padding:72px 48px;}
+    .stat-card{text-align:center;padding:24px;background:white;border:1px solid var(--border);border-radius:var(--radius-lg);transition:var(--transition);}
+    .stat-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-4px);}
+    .stat-card .stat-num{font-family:var(--font-display);font-size:2.8rem;font-weight:800;color:var(--primary);line-height:1;margin-bottom:6px;}
+    .stat-card .stat-num .stat-plus{color:var(--secondary);}
+    .stat-card .stat-label{color:var(--text-secondary);font-weight:500;font-size:14px;}
+    @media(max-width:767px){.facts-text,.facts-counter{padding:48px 24px;}}
+
+    /* Features */
+    .features-section{padding:80px 0;background:var(--surface);}
+    .feature-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;display:flex;align-items:center;gap:16px;transition:var(--transition);cursor:default;}
+    .feature-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-3px);}
+    .feature-card .fc-icon{width:56px;height:56px;flex-shrink:0;background:var(--primary-glow);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;}
+    .feature-card .fc-icon i{color:var(--primary);font-size:22px;}
+    .feature-card .fc-label{font-weight:700;color:var(--navy);font-size:15px;}
+    .feature-card .fc-desc{font-size:13px;color:var(--text-muted);margin-top:2px;}
+    .feature-img-wrap{border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg);height:100%;min-height:380px;position:relative;}
+    .feature-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+    .feature-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(13,27,42,.40) 100%);}
+
+    /* ══ 3D TILT SERVICE CARDS ══ */
+    .services-section{padding:80px 0;background:var(--surface-soft);}
+    .tilt-card{position:relative;border-radius:var(--radius-xl);padding:32px;height:100%;background:white;border:1px solid var(--border);overflow:hidden;transition:border-color .3s var(--ease);transform-style:preserve-3d;will-change:transform;cursor:default;}
+    .tilt-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(26,58,122,.08) 0%,transparent 65%);opacity:0;transition:opacity .3s;border-radius:var(--radius-xl);pointer-events:none;}
+    .tilt-card:hover::before{opacity:1;}
+    .tilt-card:hover{border-color:rgba(26,58,122,.22);box-shadow:var(--shadow-lg);}
+    .tilt-gloss{position:absolute;top:0;left:0;width:100%;height:45%;background:linear-gradient(180deg,rgba(255,255,255,.06) 0%,transparent 100%);border-radius:var(--radius-xl) var(--radius-xl) 0 0;pointer-events:none;}
+    .tilt-card::after{content:'';position:absolute;top:0;left:0;width:4px;height:0;background:var(--primary);transition:height .35s ease;border-radius:0 0 4px 0;}
+    .tilt-card:hover::after{height:100%;}
+    .service-icon-wrap{width:64px;height:64px;background:var(--primary);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-bottom:20px;transition:var(--transition);box-shadow:0 4px 16px rgba(26,58,122,.30);}
+    .tilt-card:hover .service-icon-wrap{background:var(--secondary);box-shadow:0 4px 16px rgba(244,162,97,.40);transform:scale(1.08) rotate(3deg);}
+    .service-icon-wrap i{color:white;font-size:26px;}
+    .tilt-card h4{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:10px;}
+    .tilt-card p{color:var(--text-secondary);font-size:14.5px;line-height:1.65;margin-bottom:20px;}
+    .service-link{color:var(--primary);font-weight:600;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:var(--transition);}
+    .service-link:hover{color:var(--secondary);gap:10px;}
+    .card-watermark{position:absolute;bottom:14px;right:18px;font-family:var(--font-display);font-size:3.2rem;font-weight:800;color:rgba(26,58,122,.05);line-height:1;user-select:none;pointer-events:none;}
+
+    /* Appointment */
+    .appointment-section{padding:80px 0;background:linear-gradient(135deg,var(--navy) 0%,var(--primary) 100%);position:relative;overflow:hidden;}
+    .appointment-section::before{content:'';position:absolute;top:-60px;right:-60px;width:400px;height:400px;background:radial-gradient(circle,rgba(244,162,97,.12) 0%,transparent 70%);pointer-events:none;}
+    .appointment-section h2{font-family:var(--font-display);font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;color:white;margin-bottom:16px;}
+    .appointment-section p{color:rgba(255,255,255,.80);margin-bottom:28px;}
+    .appointment-call{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);border-radius:var(--radius-lg);padding:20px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(8px);}
+    .appointment-call img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.3);}
+    .call-label{color:rgba(255,255,255,.70);font-size:12px;text-transform:uppercase;letter-spacing:.05em;}
+    .call-num{color:white;font-weight:700;font-size:1.1rem;}
+    .appointment-form-card{background:white;border-radius:var(--radius-xl);padding:40px;box-shadow:var(--shadow-lg);}
+    .appointment-form-card h3{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:24px;}
+    @media(max-width:767px){.appointment-form-card{padding:24px;}}
+    .form-label{font-weight:600;font-size:13.5px;color:var(--text-secondary);margin-bottom:6px;}
+    .form-control{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:14.5px;color:var(--navy);transition:var(--transition);background:var(--surface-soft);}
+    .form-control:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);background:white;outline:none;}
+    .form-control.is-invalid{border-color:var(--danger);}
+    .invalid-feedback{font-size:12.5px;color:var(--danger);margin-top:4px;}
+    select.form-control{cursor:pointer;}
+    textarea.form-control{resize:vertical;min-height:100px;}
+
+    /* Team */
+    .team-section{padding:80px 0;}
+    .team-card{background:white;border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;transition:var(--transition);}
+    .team-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-6px);border-color:rgba(26,58,122,.2);}
+    .team-card .team-img-wrap{position:relative;overflow:hidden;height:220px;}
+    .team-card .team-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:var(--transition-slow);}
+    .team-card:hover .team-img-wrap img{transform:scale(1.06);}
+    .team-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(13,27,42,.75) 100%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:16px;opacity:0;transition:var(--transition);}
+    .team-card:hover .team-overlay{opacity:1;}
+    .team-overlay .social-links{display:flex;gap:8px;}
+    .team-overlay .social-links a{width:36px;height:36px;background:white;color:var(--primary);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:14px;transition:var(--transition);cursor:pointer;}
+    .team-overlay .social-links a:hover{background:var(--primary);color:white;}
+    .team-card .team-body{padding:18px 20px;}
+    .team-card .team-body h5{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:3px;}
+    .team-card .team-body span{font-size:13px;color:var(--primary);font-weight:500;}
+
+    /* Testimonials */
+    .testimonial-section{padding:80px 0;background:var(--surface-soft);}
+    .testimonial-card{background:white;border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;text-align:center;position:relative;}
+    .testimonial-card::before{content:'\201C';font-size:5rem;line-height:.6;font-family:Georgia,serif;position:absolute;top:24px;left:28px;color:var(--primary);opacity:.2;}
+    .testimonial-card img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--border);margin:0 auto 16px;display:block;}
+    .testimonial-card .stars{color:var(--secondary);margin-bottom:14px;font-size:14px;}
+    .testimonial-card blockquote{font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:20px;font-style:italic;}
+    .testimonial-card h5{font-family:var(--font-display);font-size:.95rem;font-weight:700;color:var(--navy);margin:0;}
+    .testimonial-card .profession{font-size:12.5px;color:var(--text-muted);}
+    .testimonial-carousel .owl-nav{margin-top:28px;display:flex;justify-content:center;gap:8px;}
+    .testimonial-carousel .owl-nav .owl-prev,.testimonial-carousel .owl-nav .owl-next{width:44px;height:44px;background:var(--primary);color:white;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;transition:var(--transition);cursor:pointer;}
+    .testimonial-carousel .owl-nav .owl-prev:hover,.testimonial-carousel .owl-nav .owl-next:hover{background:var(--secondary);transform:scale(1.05);}
+
+    /* Footer */
+    .footer{background:var(--navy);color:rgba(255,255,255,.65);padding-top:64px;}
+    .footer h5{color:white;font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:20px;letter-spacing:.02em;}
+    .footer .footer-brand-name{font-family:var(--font-display);font-size:24px;font-weight:800;color:white;letter-spacing:-.02em;}
+    .footer .footer-brand-name span{color:var(--secondary);}
+    .footer p{font-size:14px;line-height:1.7;color:rgba(255,255,255,.60);}
+    .footer .footer-link{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.60);text-decoration:none;font-size:14px;padding:5px 0;transition:var(--transition);cursor:pointer;}
+    .footer .footer-link:hover{color:var(--secondary);padding-left:4px;}
+    .footer .footer-link i{color:var(--secondary);font-size:11px;}
+    .footer .footer-info{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:14px;}
+    .footer .footer-info i{color:var(--secondary);margin-top:3px;flex-shrink:0;}
+    .footer .social-btn{width:38px;height:38px;border:1px solid rgba(255,255,255,.2);border-radius:var(--radius-sm);display:inline-flex;align-items:center;justify-content:center;color:rgba(255,255,255,.60);text-decoration:none;transition:var(--transition);cursor:pointer;margin-right:6px;}
+    .footer .social-btn:hover{background:var(--secondary);border-color:var(--secondary);color:white;transform:translateY(-2px);}
+    .footer .newsletter-input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:white;border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;width:100%;}
+    .footer .newsletter-input::placeholder{color:rgba(255,255,255,.40);}
+    .footer .newsletter-input:focus{outline:none;border-color:var(--secondary);background:rgba(255,255,255,.12);}
+    .footer .copyright{border-top:1px solid rgba(255,255,255,.08);padding:20px 0;margin-top:48px;font-size:13.5px;color:rgba(255,255,255,.45);}
+    .footer .copyright a{color:var(--secondary);text-decoration:none;}
+    .footer .copyright a:hover{color:white;}
+
+    /* Animations */
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeInDown{from{opacity:0;transform:translateY(-18px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeInRight{from{opacity:0;transform:translateX(38px);}to{opacity:1;transform:translateX(0);}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+  </style>
+  <link href="css/style.css" rel="stylesheet"/>
+</head>
+<body>
+  <div class="scroll-progress"></div>
+  
+
+  <!-- Spinner -->
+  <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center" role="status" aria-label="Chargement en cours">
+    <div class="spinner-grow text-primary" aria-hidden="true"></div>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar d-none d-lg-block" role="banner">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="topbar-info">
+          <a href="tel:+21692202206" aria-label="Appeler Protex"><i class="fas fa-phone-alt" aria-hidden="true"></i>+216 92 202 206</a>
+          <a href="mailto:protexinsurance0@gmail.com" aria-label="Email Protex"><i class="far fa-envelope" aria-hidden="true"></i>protexinsurance0@gmail.com</a>
+          <span><i class="far fa-clock" aria-hidden="true"></i>24h/7</span>
+        </div>
+        <div class="topbar-social" aria-label="Réseaux sociaux">
+          <a href="#" aria-label="LinkedIn de Protex"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="#" aria-label="Instagram de Protex"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navbar avec logo 3D -->
+  <nav class="navbar navbar-expand-lg sticky-top px-4 px-lg-0" aria-label="Navigation principale">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <video class="brand-logo-video" autoplay loop muted playsinline aria-label="Logo Protex">
+          <source src="img/logo.mp4" type="video/mp4">
+        </video>
+        <span class="brand-name">Pro<span>tex</span></span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Ouvrir le menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav mx-auto">
+          <a href="index.html" class="nav-item nav-link active" aria-current="page">Accueil</a>
+          <a href="about.html" class="nav-item nav-link">À propos</a>
+          <a href="service.html" class="nav-item nav-link">Nos Services</a>
+          <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Pages</a>
+            <div class="dropdown-menu" role="menu">
+              <a href="feature.html" class="dropdown-item" role="menuitem">Fonctionnalités</a>
+              <a href="appointment.html" class="dropdown-item" role="menuitem">Rendez-vous</a>
+              <a href="team.html" class="dropdown-item" role="menuitem">Notre Équipe</a>
+              <a href="testimonial.html" class="dropdown-item" role="menuitem">Témoignages</a>
+              <a href="404.html" class="dropdown-item" role="menuitem">Page 404</a>
+            </div>
+          </div>
+          <a href="contact.html" class="nav-item nav-link">Contact</a>
+        </div>
+        <div class="d-flex align-items-center gap-3 ms-lg-3">
+          <a href="../view/FrontOffice/login.html" class="btn btn-light px-4 d-none d-lg-flex align-items-center gap-2">
+            <i class="fas fa-user-circle" aria-hidden="true"></i>Se connecter
+          </a>
+          <a href="../view/FrontOffice/ajoutdevis.php" class="btn btn-primary px-4 d-none d-lg-flex align-items-center gap-2">
+            <i class="fas fa-shield-alt" aria-hidden="true"></i>Obtenir un devis
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══ HERO 3D ══ -->
+  <section class="hero-3d" aria-labelledby="hero-title">
+    <canvas id="three-canvas" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge-3d"><i class="fas fa-award"></i>Assureur de confiance — 25 ans</div>
+        <h1 class="hero-title-3d" id="hero-title">Protégez<br><span class="accent">votre avenir</span><br>avec <span class="accent-t">confiance</span></h1>
+        <p class="hero-subtitle-3d">Des solutions d'assurance sur mesure pour les particuliers et les entreprises. Transparence, réactivité et expertise depuis 2000.</p>
+        <div class="hero-ctas-3d">
+          <a href="service.html" class="btn-gold-3d"><i class="fas fa-shield-alt"></i>Nos offres</a>
+          <a href="appointment.html" class="btn-glass-3d"><i class="fas fa-calendar-check"></i>Devis gratuit</a>
+        </div>
+        <div class="hero-trust-pills">
+          <div class="trust-pill-3d"><i class="fas fa-check-circle"></i>100% Certifié</div>
+          <div class="trust-pill-3d"><i class="fas fa-headset"></i>Support 24/7</div>
+          <div class="trust-pill-3d"><i class="fas fa-bolt"></i>Réponse 48h</div>
+        </div>
+      </div>
+      <div class="hero-right-3d" aria-hidden="true">
+        <div class="shield-wrap">
+          <canvas id="shield-canvas" width="300" height="340"></canvas>
+          <div class="float-stat"><div class="fs-num">1200+</div><div class="fs-lbl">Clients satisfaits</div></div>
+          <div class="float-stat"><div class="fs-num">98%</div><div class="fs-lbl">Satisfaction</div></div>
+          <div class="float-stat"><div class="fs-num">25+</div><div class="fs-lbl">Ans d'expérience</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust bar -->
+  <div class="hero-trust-bar">
+    <div class="container">
+      <div class="row g-0 justify-content-center">
+        <div class="col-6 col-md-3"><div class="trust-item"><i class="fas fa-shield-check" aria-hidden="true"></i><div class="trust-text"><strong>100% Certifié</strong>Régulé & fiable</div></div></div>
+        <div class="col-6 col-md-3"><div class="trust-item"><i class="fas fa-clock" aria-hidden="true"></i><div class="trust-text"><strong>Assistance 24/7</strong>Toujours disponible</div></div></div>
+        <div class="col-6 col-md-3"><div class="trust-item"><i class="fas fa-hand-holding-usd" aria-hidden="true"></i><div class="trust-text"><strong>Remboursement rapide</strong>Sous 48 heures</div></div></div>
+        <div class="col-6 col-md-3"><div class="trust-item"><i class="fas fa-users" aria-hidden="true"></i><div class="trust-text"><strong>+1200 clients</strong>Satisfaits & fidèles</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About -->
+  <section class="about-section" aria-labelledby="about-title">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
+          <div class="about-img-wrap">
+            <img src="img/about.jpg" alt="Conseiller Protex accompagnant un client dans ses choix d'assurance"/>
+            <div class="about-badge"><div class="badge-num">25</div><div class="badge-unit">Ans</div><div class="badge-label">d'expérience</div></div>
+          </div>
+        </div>
+        <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
+          <span class="section-badge"><i class="fas fa-info-circle" aria-hidden="true"></i>À propos de nous</span>
+          <h2 class="section-title mb-3" id="about-title">Nous sommes là pour explorer la protection avec vous</h2>
+          <p class="section-subtitle mb-4">Protex accompagne particuliers et entreprises depuis 25 ans avec des solutions d'assurance sur mesure, alliant expertise technique et service humain.</p>
+          <div class="row g-3 mb-4">
+            <div class="col-sm-6"><div class="about-feature"><div class="feature-icon"><i class="fas fa-sliders-h" aria-hidden="true"></i></div><div class="feature-text">Plans d'assurance flexibles</div></div></div>
+            <div class="col-sm-6"><div class="about-feature"><div class="feature-icon"><i class="fas fa-undo-alt" aria-hidden="true"></i></div><div class="feature-text">Garantie de remboursement</div></div></div>
+            <div class="col-sm-6"><div class="about-feature"><div class="feature-icon"><i class="fas fa-headset" aria-hidden="true"></i></div><div class="feature-text">Support client 24h/24</div></div></div>
+            <div class="col-sm-6"><div class="about-feature"><div class="feature-icon"><i class="fas fa-certificate" aria-hidden="true"></i></div><div class="feature-text">Certifié & réglementé</div></div></div>
+          </div>
+          <div class="about-cta">
+            <img src="img/chouliga.jpg" alt="Responsable commercial Protex"/>
+            <div><div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600">Appelez-nous maintenant</div><div class="cta-text"><span>+216 92 202 206</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Facts -->
+  <section class="facts-section" aria-labelledby="facts-title">
+    <div class="container-fluid px-0">
+      <div class="row g-0">
+        <div class="col-lg-6 facts-text wow fadeIn" data-wow-delay="0.1s">
+          <span class="section-badge" style="background:rgba(255,255,255,.15);color:white;margin-bottom:16px"><i class="fas fa-chart-line"></i>Nos chiffres</span>
+          <h2 id="facts-title">Pour les particuliers et les organisations</h2>
+          <p>Des milliers de familles et d'entreprises nous font confiance chaque année. Nous nous engageons à protéger ce qui compte le plus pour vous.</p>
+          <a href="about.html" class="btn btn-secondary btn-lg px-4">En savoir plus <i class="fas fa-arrow-right ms-2" aria-hidden="true"></i></a>
+        </div>
+        <div class="col-lg-6 facts-counter wow fadeIn" data-wow-delay="0.3s">
+          <div class="row g-4">
+            <div class="col-6"><div class="stat-card"><div class="stat-num"><span data-toggle="counter-up">1234</span><span class="stat-plus">+</span></div><div class="stat-label">Clients satisfaits</div></div></div>
+            <div class="col-6"><div class="stat-card"><div class="stat-num"><span data-toggle="counter-up">98</span><span class="stat-plus">%</span></div><div class="stat-label">Taux de satisfaction</div></div></div>
+            <div class="col-6"><div class="stat-card"><div class="stat-num"><span data-toggle="counter-up">47</span><span class="stat-plus">+</span></div><div class="stat-label">Prix remportés</div></div></div>
+            <div class="col-6"><div class="stat-card"><div class="stat-num"><span data-toggle="counter-up">25</span><span class="stat-plus">+</span></div><div class="stat-label">Années d'expérience</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features-section" aria-labelledby="features-title">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
+          <span class="section-badge"><i class="fas fa-star" aria-hidden="true"></i>Pourquoi Protex</span>
+          <h2 class="section-title mb-3" id="features-title">Quelques raisons pour lesquelles les gens nous choisissent</h2>
+          <p class="section-subtitle mb-4">Nous combinons expertise, technologie et accompagnement humain pour vous offrir une protection optimale.</p>
+          <div class="row g-3">
+            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.1s"><div class="feature-card"><div class="fc-icon"><i class="fas fa-bolt" aria-hidden="true"></i></div><div><div class="fc-label">Processus simple</div><div class="fc-desc">Souscription en ligne en 5 minutes</div></div></div></div>
+            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.2s"><div class="feature-card"><div class="fc-icon"><i class="fas fa-truck-fast" aria-hidden="true"></i></div><div><div class="fc-label">Livraison rapide</div><div class="fc-desc">Contrat reçu sous 24h</div></div></div></div>
+            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.3s"><div class="feature-card"><div class="fc-icon"><i class="fas fa-sliders" aria-hidden="true"></i></div><div><div class="fc-label">Gestion de police</div><div class="fc-desc">Contrôle total depuis votre espace</div></div></div></div>
+            <div class="col-sm-6 wow fadeIn" data-wow-delay="0.4s"><div class="feature-card"><div class="fc-icon"><i class="fas fa-piggy-bank" aria-hidden="true"></i></div><div><div class="fc-label">Économies garanties</div><div class="fc-desc">Plans à prix compétitifs</div></div></div></div>
+          </div>
+        </div>
+        <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.4s">
+          <div class="feature-img-wrap"><img src="img/feature.jpg" alt="Équipe Protex analysant des plans d'assurance"/></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SERVICES 3D TILT ══ -->
+  <section class="services-section" aria-labelledby="services-title">
+    <div class="container">
+      <div class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">
+        <span class="section-badge"><i class="fas fa-briefcase" aria-hidden="true"></i>Nos offres</span>
+        <h2 class="section-title mt-2" id="services-title">Nous fournissons des services d'assurance professionnels</h2>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s"><div class="tilt-card" data-tilt><div class="tilt-gloss"></div><div class="service-icon-wrap"><i class="fas fa-heart-pulse" aria-hidden="true"></i></div><h4>Assurance Vie</h4><p>Protégez l'avenir financier de vos proches avec nos plans de vie flexibles et adaptés à chaque situation familiale.</p><a href="service.html" class="service-link">En savoir plus <i class="fas fa-arrow-right" aria-hidden="true"></i></a><div class="card-watermark">01</div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s"><div class="tilt-card" data-tilt><div class="tilt-gloss"></div><div class="service-icon-wrap"><i class="fas fa-stethoscope" aria-hidden="true"></i></div><h4>Assurance Santé</h4><p>Accédez aux meilleurs soins sans vous soucier des frais médicaux grâce à notre couverture santé complète.</p><a href="service.html" class="service-link">En savoir plus <i class="fas fa-arrow-right" aria-hidden="true"></i></a><div class="card-watermark">02</div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s"><div class="tilt-card" data-tilt><div class="tilt-gloss"></div><div class="service-icon-wrap"><i class="fas fa-house" aria-hidden="true"></i></div><h4>Assurance Habitation</h4><p>Protégez votre foyer contre tous les risques — incendie, dégâts des eaux, vol — avec notre assurance habitation.</p><a href="service.html" class="service-link">En savoir plus <i class="fas fa-arrow-right" aria-hidden="true"></i></a><div class="card-watermark">03</div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.4s"><div class="tilt-card" data-tilt><div class="tilt-gloss"></div><div class="service-icon-wrap"><i class="fas fa-car" aria-hidden="true"></i></div><h4>Assurance Véhicule</h4><p>Roulez sereinement avec notre couverture automobile complète — responsabilité, tout risque, assistance 24h/24.</p><a href="service.html" class="service-link">En savoir plus <i class="fas fa-arrow-right" aria-hidden="true"></i></a><div class="card-watermark">04</div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s"><div class="tilt-card" data-tilt><div class="tilt-gloss"></div><div class="service-icon-wrap"><i class="fas fa-building" aria-hidden="true"></i></div><h4>Assurance Entreprise</h4><p>Sécurisez votre activité professionnelle avec des solutions adaptées aux PME et grandes entreprises.</p><a href="service.html" class="service-link">En savoir plus <i class="fas fa-arrow-right" aria-hidden="true"></i></a><div class="card-watermark">05</div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s"><div class="tilt-card" data-tilt><div class="tilt-gloss"></div><div class="service-icon-wrap"><i class="fas fa-landmark" aria-hidden="true"></i></div><h4>Assurance Patrimoine</h4><p>Préservez et faites fructifier votre patrimoine grâce à nos solutions de gestion et protection d'actifs.</p><a href="service.html" class="service-link">En savoir plus <i class="fas fa-arrow-right" aria-hidden="true"></i></a><div class="card-watermark">06</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Appointment -->
+  <section class="appointment-section" aria-labelledby="appointment-title">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.2s">
+          <span class="section-badge" style="background:rgba(255,255,255,.15);color:rgba(255,255,255,.9)"><i class="fas fa-trophy" aria-hidden="true"></i>Primé</span>
+          <h2 id="appointment-title">Société d'assurance primée et reconnue</h2>
+          <p>Notre expertise et notre engagement client nous ont valu la confiance de plus de 1200 familles et entreprises. Prenez rendez-vous pour une consultation gratuite.</p>
+          <div class="appointment-call">
+            <img src="img/chouliga.jpg" alt="Agent Protex disponible pour vous accompagner"/>
+            <div><div class="call-label">Appelez notre équipe</div><div class="call-num">+216 92 202 206</div></div>
+          </div>
+        </div>
+        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.4s">
+          <div class="appointment-form-card">
+            <h3>Prenez un rendez-vous</h3>
+            <form novalidate>
+              <div class="row g-3">
+                <div class="col-sm-6"><label for="fname" class="form-label">Votre prénom <span style="color:var(--danger)">*</span></label><input type="text" class="form-control" id="fname" placeholder="ex: Ahmed" required aria-required="true"/><div class="invalid-feedback">Ce champ est requis.</div></div>
+                <div class="col-sm-6"><label for="femail" class="form-label">Votre email <span style="color:var(--danger)">*</span></label><input type="email" class="form-control" id="femail" placeholder="ex: ahmed@email.com" required aria-required="true"/><div class="invalid-feedback">Email invalide.</div></div>
+                <div class="col-sm-6"><label for="fphone" class="form-label">Téléphone</label><input type="tel" class="form-control" id="fphone" placeholder="+216 XX XXX XXX"/></div>
+                <div class="col-sm-6"><label for="fservice" class="form-label">Type de service <span style="color:var(--danger)">*</span></label><select class="form-control" id="fservice" required aria-required="true"><option value="" disabled selected>Choisissez...</option><option>Assurance Vie</option><option>Assurance Santé</option><option>Assurance Habitation</option><option>Assurance Véhicule</option><option>Assurance Entreprise</option></select></div>
+                <div class="col-12"><label for="fmessage" class="form-label">Message</label><textarea class="form-control" id="fmessage" placeholder="Décrivez brièvement votre besoin..." rows="3"></textarea></div>
+                <div class="col-12"><button class="btn btn-primary btn-lg w-100 py-3" type="submit"><i class="fas fa-calendar-check me-2" aria-hidden="true"></i>Prendre rendez-vous</button></div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="team-section" aria-labelledby="team-title">
+    <div class="container">
+      <div class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">
+        <span class="section-badge"><i class="fas fa-users" aria-hidden="true"></i>Notre équipe</span>
+        <h2 class="section-title mt-2" id="team-title">Rencontrez nos experts en assurance</h2>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s"><div class="team-card"><div class="team-img-wrap"><img src="img/abdoo.jpg" alt="Abderrahmen ben abdallah, Directeur général"/><div class="team-overlay"><div class="social-links" aria-label="Réseaux Abderrahmen"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div></div></div><div class="team-body"><h5>Abderrahmen ben abdallah</h5><span>Directeur Général</span></div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s"><div class="team-card"><div class="team-img-wrap"><img src="img/karim.jpg" alt="Karim miledi, Directeur Commercial"/><div class="team-overlay"><div class="social-links" aria-label="Réseaux"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div></div></div><div class="team-body"><h5>Karim miledi</h5><span>Directeur Commercial</span></div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s"><div class="team-card"><div class="team-img-wrap"><img src="img/yessine.jpg" alt="Yessine ben hamza, Responsable Digital"/><div class="team-overlay"><div class="social-links" aria-label="Réseaux Yessine"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div></div></div><div class="team-body"><h5>Yessine ben hamza</h5><span>Responsable Digital</span></div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s"><div class="team-card"><div class="team-img-wrap"><img src="img/sabrine.jpg" alt="Sabrine mchabet, Responsable Sinistres"/><div class="team-overlay"><div class="social-links" aria-label="Réseaux Sabrine"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div></div></div><div class="team-body"><h5>Sabrine mchabet</h5><span>Responsable Sinistres</span></div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s"><div class="team-card"><div class="team-img-wrap"><img src="img/mariem.jpg" alt="Mariem Bouazizi, Chargée Relations Clients"/><div class="team-overlay"><div class="social-links" aria-label="Réseaux Mariem"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div></div></div><div class="team-body"><h5>Mariem Bouazizi</h5><span>Chargée Relations Clients</span></div></div></div>
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s"><div class="team-card"><div class="team-img-wrap"><img src="img/sadok ber.jpg" alt="Sadok Berrzouga, Actuaire Senior"/><div class="team-overlay"><div class="social-links" aria-label="Réseaux Sadok"><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div></div></div><div class="team-body"><h5>Sadok Berrzouga</h5><span>Actuaire Senior</span></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonial-section" aria-labelledby="testimonial-title">
+    <div class="container">
+      <div class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">
+        <span class="section-badge"><i class="fas fa-quote-left" aria-hidden="true"></i>Témoignages</span>
+        <h2 class="section-title mt-2" id="testimonial-title">Ce que disent nos clients</h2>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-8 wow fadeIn" data-wow-delay="0.3s">
+          <div class="owl-carousel testimonial-carousel" aria-live="polite">
+            <div class="testimonial-card" role="article"><img src="img/testimonial-1.jpg" alt="Ahmed Bouzid, client Protex"/><div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><blockquote>"Protex m'a accompagné lors d'un sinistre automobile de façon remarquable. L'équipe est réactive, professionnelle et vraiment à l'écoute. Je recommande vivement."</blockquote><h5>Ahmed Bouzid</h5><div class="profession">Chef d'entreprise, Tunis</div></div>
+            <div class="testimonial-card" role="article"><img src="img/testimonial-2.jpg" alt="Fatma Labidi, cliente Protex"/><div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><blockquote>"Grâce à Protex, j'ai pu souscrire une assurance santé famille adaptée à mes besoins et à mon budget. Le processus en ligne est simple et rapide. Excellent service !"</blockquote><h5>Fatma Labidi</h5><div class="profession">Médecin, Sousse</div></div>
+            <div class="testimonial-card" role="article"><img src="img/testimonial-3.jpg" alt="Yassine Trabelsi, client Protex"/><div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div><blockquote>"J'ai souscrit une assurance habitation via Protex et j'ai été impressionné par la clarté des garanties et la rapidité du traitement de ma demande. Très professionnel."</blockquote><h5>Yassine Trabelsi</h5><div class="profession">Ingénieur, Sfax</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-4 col-md-6">
+          <div class="footer-brand-name mb-3">Pro<span>tex</span></div>
+          <p>Votre partenaire de confiance en assurance depuis 25 ans. Nous protégeons les individus, les familles et les entreprises avec expertise et transparence.</p>
+          <div class="mt-3">
+            <a href="#" class="social-btn" aria-label="LinkedIn de Protex"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+            <a href="#" class="social-btn" aria-label="Instagram de Protex"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-6">
+          <h5>Adresse</h5>
+          <div class="footer-info"><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span>Esprit Ghazela, Ariana</span></div>
+          <div class="footer-info"><i class="fas fa-phone-alt" aria-hidden="true"></i><a href="tel:+21692202206" style="color:inherit;text-decoration:none">+216 92 202 206</a></div>
+          <div class="footer-info"><i class="fas fa-envelope" aria-hidden="true"></i><a href="mailto:protexinsurance0@gmail.com" style="color:inherit;text-decoration:none">protexinsurance0@gmail.com</a></div>
+        </div>
+        <div class="col-lg-2 col-md-6">
+          <h5>Liens rapides</h5>
+          <nav aria-label="Liens du pied de page">
+            <a href="about.html" class="footer-link"><i class="fas fa-angle-right" aria-hidden="true"></i>À propos</a>
+            <a href="contact.html" class="footer-link"><i class="fas fa-angle-right" aria-hidden="true"></i>Contact</a>
+            <a href="service.html" class="footer-link"><i class="fas fa-angle-right" aria-hidden="true"></i>Nos Services</a>
+            <a href="#" class="footer-link"><i class="fas fa-angle-right" aria-hidden="true"></i>Conditions générales</a>
+            <a href="#" class="footer-link"><i class="fas fa-angle-right" aria-hidden="true"></i>Support</a>
+          </nav>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h5>Newsletter</h5>
+          <p>Restez informé de nos offres et actualités en assurance.</p>
+          <form aria-label="Inscription à la newsletter">
+            <label for="newsletter-email" class="visually-hidden">Votre adresse email</label>
+            <div class="d-flex gap-2 mt-3">
+              <input id="newsletter-email" type="email" class="newsletter-input" placeholder="Votre email..." required/>
+              <button type="submit" class="btn btn-secondary px-3 flex-shrink-0"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">&copy; 2025 <a href="#">Protex</a> — Tous droits réservés.</div>
+          <div class="col-md-6 text-center text-md-end">Plateforme d'assurance digitale — Esprit School of Engineering</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top btn" aria-label="Retour en haut de page" style="display:none"><i class="fas fa-arrow-up" aria-hidden="true"></i></a>
+
+  <!-- Scripts existants du projet -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="lib/wow/wow.min.js"></script>
+  <script src="lib/easing/easing.min.js"></script>
+  <script src="lib/waypoints/waypoints.min.js"></script>
+  <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+  <script src="lib/counterup/counterup.min.js"></script>
+  <!-- Three.js pour le fond 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+  // ── 1. THREE.JS FOND 3D ──
+  (function(){
+    var c=document.getElementById('three-canvas');
+    var r=new THREE.WebGLRenderer({canvas:c,alpha:true,antialias:true});
+    r.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    r.setSize(window.innerWidth,window.innerHeight);
+    var sc=new THREE.Scene();
+    var cam=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,.1,1000);
+    cam.position.set(0,0,18);
+    sc.add(new THREE.AmbientLight(0xffffff,.3));
+    var l1=new THREE.PointLight(0x1A3A7A,2.5,60);l1.position.set(10,10,10);sc.add(l1);
+    var l2=new THREE.PointLight(0xF4A261,2,60);l2.position.set(-10,-10,5);sc.add(l2);
+    var l3=new THREE.PointLight(0x2EC4B6,1.5,40);l3.position.set(0,8,-5);sc.add(l3);
+    var geos=[new THREE.OctahedronGeometry(.9,0),new THREE.TetrahedronGeometry(.8,0),new THREE.IcosahedronGeometry(.7,0),new THREE.BoxGeometry(1,1,1),new THREE.TorusGeometry(.6,.18,8,12)];
+    var cols=[0x1A3A7A,0x2451a3,0xF4A261,0x2EC4B6,0x112240,0xe08944];
+    var shapes=[];
+    for(var i=0;i<28;i++){
+      var g=geos[Math.floor(Math.random()*geos.length)].clone();
+      var m=new THREE.MeshPhongMaterial({color:cols[Math.floor(Math.random()*cols.length)],transparent:true,opacity:Math.random()*.35+.12,wireframe:Math.random()>.5,shininess:80});
+      var mesh=new THREE.Mesh(g,m);
+      mesh.position.set((Math.random()-.5)*34,(Math.random()-.5)*22,(Math.random()-.5)*12-4);
+      var s=Math.random()*.7+.4;mesh.scale.set(s,s,s);
+      mesh.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,Math.random()*Math.PI);
+      mesh.userData={vx:(Math.random()-.5)*.003,vy:(Math.random()-.5)*.003,rx:(Math.random()-.5)*.008,ry:(Math.random()-.5)*.008,rz:(Math.random()-.5)*.005};
+      sc.add(mesh);shapes.push(mesh);
+    }
+    var pg=new THREE.BufferGeometry();
+    var pos=new Float32Array(180*3);
+    for(var i=0;i<180;i++){pos[i*3]=(Math.random()-.5)*50;pos[i*3+1]=(Math.random()-.5)*30;pos[i*3+2]=(Math.random()-.5)*20-5;}
+    pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    sc.add(new THREE.Points(pg,new THREE.PointsMaterial({color:0xffffff,size:.07,transparent:true,opacity:.4})));
+    var grid=new THREE.GridHelper(60,40,0x1A3A7A,0x0a1628);grid.position.y=-8;grid.material.transparent=true;grid.material.opacity=.22;sc.add(grid);
+    var mx=0,my=0;
+    document.addEventListener('mousemove',function(e){mx=(e.clientX/window.innerWidth-.5)*2;my=(e.clientY/window.innerHeight-.5)*2;});
+    var t=0;
+    (function anim(){
+      requestAnimationFrame(anim);t+=.01;
+      shapes.forEach(function(m){var d=m.userData;m.position.x+=d.vx;m.position.y+=d.vy;m.rotation.x+=d.rx;m.rotation.y+=d.ry;m.rotation.z+=d.rz;if(m.position.x>18)m.position.x=-18;if(m.position.x<-18)m.position.x=18;if(m.position.y>12)m.position.y=-12;if(m.position.y<-12)m.position.y=12;});
+      grid.position.z=(t*.5)%3;
+      cam.position.x+=(mx*2.5-cam.position.x)*.03;cam.position.y+=(-my*1.5-cam.position.y)*.03;cam.lookAt(0,0,0);
+      r.render(sc,cam);
+    })();
+    window.addEventListener('resize',function(){cam.aspect=window.innerWidth/window.innerHeight;cam.updateProjectionMatrix();r.setSize(window.innerWidth,window.innerHeight);});
+  })();
+
+  // ── 2. BOUCLIER 3D CANVAS ──
+  (function(){
+    var canvas=document.getElementById('shield-canvas');if(!canvas)return;
+    var ctx=canvas.getContext('2d');var W=canvas.width,H=canvas.height;var t=0;
+    function path(ctx,cx,cy,w,h){var x=cx-w/2,y=cy-h/2,r=w*.12;ctx.beginPath();ctx.moveTo(cx,y+h);ctx.bezierCurveTo(cx-w*.1,y+h*.78,x,y+h*.6,x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.lineTo(cx-w*.15,y);ctx.lineTo(cx+w*.15,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.bezierCurveTo(x+w,y+h*.6,cx+w*.1,y+h*.78,cx,y+h);ctx.closePath();}
+    function draw(){
+      ctx.clearRect(0,0,W,H);var cx=W/2,cy=H/2-8,p=Math.sin(t*.04)*.04+1;var sw=105*p,sh=124*p;
+      for(var i=3;i>=1;i--){ctx.beginPath();ctx.arc(cx,cy,96*p+i*16,0,Math.PI*2);ctx.strokeStyle='rgba(26,58,122,'+(0.07/i)+')';ctx.lineWidth=18;ctx.stroke();}
+      ctx.save();ctx.translate(cx,cy);ctx.rotate(t*.015);ctx.beginPath();ctx.ellipse(0,0,108*p,42,0,0,Math.PI*2);ctx.strokeStyle='rgba(244,162,97,.22)';ctx.lineWidth=1.5;ctx.setLineDash([6,12]);ctx.stroke();ctx.setLineDash([]);ctx.beginPath();ctx.arc(108*p,0,5,0,Math.PI*2);ctx.fillStyle='#F4A261';ctx.shadowColor='#F4A261';ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;ctx.restore();
+      ctx.save();ctx.translate(cx,cy);ctx.rotate(-t*.01);ctx.beginPath();ctx.ellipse(0,0,84*p,34,Math.PI/6,0,Math.PI*2);ctx.strokeStyle='rgba(46,196,182,.18)';ctx.lineWidth=1;ctx.setLineDash([4,8]);ctx.stroke();ctx.setLineDash([]);ctx.beginPath();ctx.arc(84*p,0,4,0,Math.PI*2);ctx.fillStyle='#2EC4B6';ctx.shadowColor='#2EC4B6';ctx.shadowBlur=8;ctx.fill();ctx.shadowBlur=0;ctx.restore();
+      ctx.save();ctx.translate(7,9);path(ctx,cx,cy,sw*.97,sh*.97);ctx.fillStyle='rgba(0,0,0,.28)';ctx.fill();ctx.restore();
+      var g=ctx.createLinearGradient(cx-sw/2,cy-sh/2,cx+sw/2,cy+sh/2);g.addColorStop(0,'#1e4899');g.addColorStop(.4,'#1A3A7A');g.addColorStop(1,'#0d2257');path(ctx,cx,cy,sw,sh);ctx.fillStyle=g;ctx.fill();
+      path(ctx,cx,cy,sw,sh);var gb=ctx.createLinearGradient(cx,cy-sh/2,cx,cy+sh/2);gb.addColorStop(0,'rgba(255,255,255,.32)');gb.addColorStop(.5,'rgba(244,162,97,.45)');gb.addColorStop(1,'rgba(255,255,255,.08)');ctx.strokeStyle=gb;ctx.lineWidth=2.5;ctx.stroke();
+      path(ctx,cx,cy-sh*.12,sw*.74,sh*.44);var gg=ctx.createLinearGradient(cx,cy-sh/2,cx,cy);gg.addColorStop(0,'rgba(255,255,255,.16)');gg.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=gg;ctx.fill();
+      path(ctx,cx,cy,sw*.76,sh*.76);ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.font='800 '+(50*p)+"px 'Sora',sans-serif";ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='rgba(255,255,255,.95)';ctx.shadowColor='rgba(244,162,97,.55)';ctx.shadowBlur=16;ctx.fillText('P',cx,cy+4*p);ctx.shadowBlur=0;
+      t++;requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  // ── 3. TILT 3D CARDS ──
+  (function(){
+    document.querySelectorAll('[data-tilt]').forEach(function(card){
+      card.addEventListener('mousemove',function(e){
+        var r=card.getBoundingClientRect();
+        var x=e.clientX-r.left,y=e.clientY-r.top;
+        var cx=r.width/2,cy=r.height/2;
+        card.style.setProperty('--mx',(x/r.width*100).toFixed(1)+'%');
+        card.style.setProperty('--my',(y/r.height*100).toFixed(1)+'%');
+        card.style.transform='perspective(800px) rotateX('+((y-cy)/cy*13)+'deg) rotateY('+((cx-x)/cx*13)+'deg) scale(1.04)';
+      });
+      card.addEventListener('mouseleave',function(){card.style.transform='perspective(800px) rotateX(0) rotateY(0) scale(1)';});
+    });
+  })();
+
+  // ── 4. Form validation ──
+  (function(){
+    'use strict';
+    document.querySelectorAll('form[novalidate]').forEach(function(form){
+      form.addEventListener('submit',function(e){if(!form.checkValidity()){e.preventDefault();e.stopPropagation();}form.classList.add('was-validated');},false);
+    });
+  })();
+  </script>
+
+</body>
+</html>

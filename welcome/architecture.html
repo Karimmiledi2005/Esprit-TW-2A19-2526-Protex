@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Architecture Protex — Diagramme interactif</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+    <style>
+        :root {
+            --primary: #1A3A7A; --accent: #FF6B1A; --success: #2EC4B6;
+            --purple: #7c3aed; --gold: #EF9F27; --danger: #e63946;
+            --bg: #060D1F; --card: rgba(255,255,255,0.04);
+            --border: rgba(255,255,255,0.08);
+            --text: #e2e8f0; --muted: #94a3b8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg); color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* ── Stars background ────────────────────────────── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(26,58,122,0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(255,107,26,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, rgba(124,58,237,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ── Header ──────────────────────────────────────── */
+        header {
+            position: relative; z-index: 10;
+            padding: 32px 40px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px; font-weight: 900; color: #fff;
+        }
+        .logo span { color: var(--accent); }
+        .header-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: 20px;
+            background: rgba(46,196,182,0.12); border: 1px solid rgba(46,196,182,0.2);
+            font-size: 12px; font-weight: 700; color: var(--success);
+        }
+        .header-badge::before {
+            content: ''; width: 7px; height: 7px; border-radius: 50%;
+            background: var(--success); animation: blink 1.5s ease-in-out infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        /* ── Page title ──────────────────────────────────── */
+        .page-header {
+            position: relative; z-index: 10;
+            text-align: center; padding: 48px 20px 16px;
+        }
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 42px; font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        .page-sub { font-size: 15px; color: var(--muted); max-width: 600px; margin: 0 auto; }
+
+        /* ── SVG Diagram ─────────────────────────────────── */
+        .diagram-wrap {
+            position: relative; z-index: 10;
+            max-width: 1000px; margin: 48px auto;
+            padding: 0 20px;
+        }
+
+        #archSvg {
+            width: 100%; max-width: 960px;
+            display: block; margin: 0 auto;
+            overflow: visible;
+        }
+
+        /* Node styles */
+        .arch-node {
+            cursor: pointer;
+            transition: filter 0.25s ease;
+        }
+        .arch-node:hover { filter: brightness(1.25) drop-shadow(0 0 16px rgba(255,107,26,0.5)); }
+        .arch-node rect, .arch-node circle { transition: all 0.3s ease; }
+
+        /* Flow arrows */
+        .flow-path {
+            stroke-dasharray: 8 4;
+            animation: flowDash 2s linear infinite;
+        }
+        .flow-path-reverse {
+            stroke-dasharray: 8 4;
+            animation: flowDashR 2s linear infinite;
+        }
+        @keyframes flowDash  { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -48; } }
+        @keyframes flowDashR { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 48; } }
+
+        /* Labels */
+        .arch-label {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700; fill: #fff;
+        }
+        .arch-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 10px; fill: rgba(255,255,255,0.6);
+        }
+        .flow-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; fill: var(--muted);
+        }
+
+        /* ── Tooltip ─────────────────────────────────────── */
+        #tooltip {
+            position: fixed;
+            background: rgba(6,13,31,0.95);
+            border: 1px solid var(--border);
+            border-radius: 14px; padding: 16px 20px;
+            max-width: 260px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+        #tooltip.show { opacity: 1; }
+        #tooltip-title { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        #tooltip-body  { font-size: 12px; color: var(--muted); line-height: 1.7; }
+        #tooltip-tech  { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; }
+        .tech-pill {
+            padding: 2px 9px; border-radius: 10px;
+            font-size: 10px; font-weight: 700;
+            background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7);
+        }
+
+        /* ── Legend ──────────────────────────────────────── */
+        .legend {
+            position: relative; z-index: 10;
+            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+            padding: 0 20px 20px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+        .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+        /* ── Data flow table ─────────────────────────────── */
+        .flow-table {
+            position: relative; z-index: 10;
+            max-width: 900px; margin: 0 auto 60px;
+            padding: 0 20px;
+        }
+        .flow-table h3 {
+            font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800;
+            color: #fff; margin-bottom: 16px; text-align: center;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: rgba(255,255,255,0.05); padding: 10px 16px;
+            font-size: 11px; font-weight: 700; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.06em;
+            border-bottom: 1px solid var(--border); text-align: left;
+        }
+        td {
+            padding: 12px 16px; font-size: 13px; color: var(--text);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        tr:hover td { background: rgba(255,255,255,0.03); }
+        code {
+            background: rgba(255,255,255,0.08); padding: 2px 7px;
+            border-radius: 5px; font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; color: var(--success);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Tooltip -->
+<div id="tooltip">
+    <div id="tooltip-title"></div>
+    <div id="tooltip-body"></div>
+    <div id="tooltip-tech"></div>
+</div>
+
+<!-- Header -->
+<header>
+    <div class="logo">Prot<span>ex</span></div>
+    <span class="header-badge">Architecture Live</span>
+</header>
+
+<!-- Page Header -->
+<div class="page-header">
+    <h1 class="page-title">Diagramme d'Architecture</h1>
+    <p class="page-sub">Vue interactive du flux de données entre le navigateur, le cœur PHP MVC, la base MySQL et les microservices Flask IA.</p>
+</div>
+
+<!-- SVG Diagram -->
+<div class="diagram-wrap">
+<svg id="archSvg" viewBox="0 0 960 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <marker id="arrowBlue"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2EC4B6"/></marker>
+        <marker id="arrowOrange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#FF6B1A"/></marker>
+        <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#7c3aed"/></marker>
+        <marker id="arrowGold"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#EF9F27"/></marker>
+        <!-- Glows -->
+        <filter id="glowBlue"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="glowOrange"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="glowPurple"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <!-- Grid pattern -->
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+        </pattern>
+    </defs>
+
+    <!-- Background grid -->
+    <rect width="960" height="520" fill="url(#grid)" rx="20"/>
+
+    <!-- ═══ LAYER BACKGROUNDS ══════════════════════════════ -->
+    <!-- Browser layer -->
+    <rect x="20" y="20" width="140" height="480" rx="16" fill="rgba(46,196,182,0.05)" stroke="rgba(46,196,182,0.20)" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <text x="90" y="46" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="700" fill="rgba(46,196,182,0.7)" letter-spacing="1">CLIENT</text>
+
+    <!-- PHP MVC layer -->
+    <rect x="200" y="20" width="300" height="480" rx="16" fill="rgba(26,58,122,0.06)" stroke="rgba(26,58,122,0.30)" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <text x="350" y="46" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="700" fill="rgba(100,140,255,0.7)" letter-spacing="1">PHP 8.1 MVC</text>
+
+    <!-- Flask layer -->
+    <rect x="550" y="20" width="260" height="480" rx="16" fill="rgba(124,58,237,0.05)" stroke="rgba(124,58,237,0.20)" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <text x="680" y="46" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="700" fill="rgba(124,58,237,0.7)" letter-spacing="1">FLASK MICROSERVICES</text>
+
+    <!-- DB layer -->
+    <rect x="860" y="20" width="80" height="480" rx="16" fill="rgba(239,159,39,0.05)" stroke="rgba(239,159,39,0.20)" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <text x="900" y="46" text-anchor="middle" font-family="Outfit,sans-serif" font-size="9" font-weight="700" fill="rgba(239,159,39,0.7)" letter-spacing="0.5">DATA</text>
+
+    <!-- ═══ BROWSER NODES ══════════════════════════════════ -->
+    <!-- Browser -->
+    <g class="arch-node" data-node="browser">
+        <rect x="30" y="60" width="120" height="70" rx="14" fill="rgba(46,196,182,0.15)" stroke="rgba(46,196,182,0.5)" stroke-width="2" filter="url(#glowBlue)"/>
+        <text x="90" y="87" text-anchor="middle" font-size="22">🌐</text>
+        <text x="90" y="106" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">Navigateur</text>
+        <text x="90" y="120" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="rgba(255,255,255,0.5)">Bootstrap 5 + JS</text>
+    </g>
+
+    <!-- Chart.js -->
+    <g class="arch-node" data-node="chartjs">
+        <rect x="30" y="155" width="120" height="55" rx="12" fill="rgba(255,107,26,0.12)" stroke="rgba(255,107,26,0.35)" stroke-width="1.5"/>
+        <text x="90" y="177" text-anchor="middle" font-size="16">📊</text>
+        <text x="90" y="197" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="700" fill="#fff">Chart.js</text>
+    </g>
+
+    <!-- Stripe -->
+    <g class="arch-node" data-node="stripe">
+        <rect x="30" y="230" width="120" height="55" rx="12" fill="rgba(99,91,255,0.12)" stroke="rgba(99,91,255,0.35)" stroke-width="1.5"/>
+        <text x="90" y="252" text-anchor="middle" font-size="16">💳</text>
+        <text x="90" y="272" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="700" fill="#fff">Stripe API</text>
+    </g>
+
+    <!-- FaceID Client -->
+    <g class="arch-node" data-node="face-client">
+        <rect x="30" y="305" width="120" height="55" rx="12" fill="rgba(46,196,182,0.08)" stroke="rgba(46,196,182,0.25)" stroke-width="1.5"/>
+        <text x="90" y="327" text-anchor="middle" font-size="16">📸</text>
+        <text x="90" y="347" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="700" fill="#fff">Face ID Client</text>
+    </g>
+
+    <!-- ═══ PHP MVC CORE ══════════════════════════════════ -->
+    <!-- Router / bootstrap.php -->
+    <g class="arch-node" data-node="router">
+        <rect x="215" y="60" width="130" height="65" rx="14" fill="rgba(26,58,122,0.5)" stroke="rgba(100,149,237,0.6)" stroke-width="2" filter="url(#glowBlue)"/>
+        <text x="280" y="83" text-anchor="middle" font-size="18">⚙️</text>
+        <text x="280" y="102" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">Router</text>
+        <text x="280" y="116" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.5)">bootstrap.php</text>
+    </g>
+
+    <!-- Controllers group -->
+    <g class="arch-node" data-node="controllers">
+        <rect x="215" y="150" width="130" height="65" rx="14" fill="rgba(26,58,122,0.4)" stroke="rgba(100,149,237,0.5)" stroke-width="1.5"/>
+        <text x="280" y="173" text-anchor="middle" font-size="18">🎮</text>
+        <text x="280" y="192" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">Controllers</text>
+        <text x="280" y="206" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.5)">MVC Pattern</text>
+    </g>
+
+    <!-- Models -->
+    <g class="arch-node" data-node="models">
+        <rect x="215" y="238" width="130" height="65" rx="14" fill="rgba(26,58,122,0.35)" stroke="rgba(100,149,237,0.4)" stroke-width="1.5"/>
+        <text x="280" y="261" text-anchor="middle" font-size="18">📦</text>
+        <text x="280" y="280" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">Models</text>
+        <text x="280" y="294" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.5)">PDO / Entities</text>
+    </g>
+
+    <!-- Views -->
+    <g class="arch-node" data-node="views">
+        <rect x="215" y="326" width="130" height="65" rx="14" fill="rgba(26,58,122,0.3)" stroke="rgba(100,149,237,0.35)" stroke-width="1.5"/>
+        <text x="280" y="349" text-anchor="middle" font-size="18">🖼️</text>
+        <text x="280" y="368" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">Views</text>
+        <text x="280" y="382" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.5)">PHP Templates</text>
+    </g>
+
+    <!-- API Gateway -->
+    <g class="arch-node" data-node="api">
+        <rect x="360" y="195" width="120" height="65" rx="14" fill="rgba(255,107,26,0.20)" stroke="rgba(255,107,26,0.6)" stroke-width="2" filter="url(#glowOrange)"/>
+        <text x="420" y="218" text-anchor="middle" font-size="18">🔗</text>
+        <text x="420" y="237" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">API Gateway</text>
+        <text x="420" y="251" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.5)">api.php</text>
+    </g>
+
+    <!-- ═══ FLASK MICROSERVICES ════════════════════════════ -->
+    <!-- OCR -->
+    <g class="arch-node" data-node="ocr">
+        <rect x="570" y="65" width="215" height="65" rx="14" fill="rgba(124,58,237,0.25)" stroke="rgba(124,58,237,0.6)" stroke-width="2" filter="url(#glowPurple)"/>
+        <text x="677" y="88" text-anchor="middle" font-size="18">📄</text>
+        <text x="677" y="107" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">Flask OCR</text>
+        <text x="677" y="121" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.5)">:5007 — Tesseract</text>
+    </g>
+
+    <!-- FaceID -->
+    <g class="arch-node" data-node="faceid">
+        <rect x="570" y="155" width="215" height="65" rx="14" fill="rgba(124,58,237,0.20)" stroke="rgba(124,58,237,0.5)" stroke-width="1.5"/>
+        <text x="677" y="178" text-anchor="middle" font-size="18">👁️</text>
+        <text x="677" y="197" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">Flask Face ID</text>
+        <text x="677" y="211" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.5)">:5000 — face_recognition</text>
+    </g>
+
+    <!-- Fraud/CAPTCHA -->
+    <g class="arch-node" data-node="fraud">
+        <rect x="570" y="245" width="215" height="65" rx="14" fill="rgba(124,58,237,0.20)" stroke="rgba(124,58,237,0.5)" stroke-width="1.5"/>
+        <text x="677" y="268" text-anchor="middle" font-size="18">🛡️</text>
+        <text x="677" y="287" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">Flask Fraude + CAPTCHA</text>
+        <text x="677" y="301" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.5)">:5006 — LLaMA / scikit</text>
+    </g>
+
+    <!-- LLM Chatbot -->
+    <g class="arch-node" data-node="chatbot">
+        <rect x="570" y="335" width="215" height="65" rx="14" fill="rgba(124,58,237,0.15)" stroke="rgba(124,58,237,0.35)" stroke-width="1.5"/>
+        <text x="677" y="358" text-anchor="middle" font-size="18">🤖</text>
+        <text x="677" y="377" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="#fff">LLaMA Chatbot</text>
+        <text x="677" y="391" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.5)">Ollama local</text>
+    </g>
+
+    <!-- ═══ DATABASE ════════════════════════════════════════ -->
+    <g class="arch-node" data-node="mysql">
+        <rect x="868" y="180" width="64" height="140" rx="12" fill="rgba(239,159,39,0.20)" stroke="rgba(239,159,39,0.5)" stroke-width="2"/>
+        <text x="900" y="218" text-anchor="middle" font-size="20">🗄️</text>
+        <text x="900" y="240" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="700" fill="#fff">MySQL</text>
+        <text x="900" y="256" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(255,255,255,0.5)">PDO</text>
+        <text x="900" y="272" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(255,255,255,0.5)">:3306</text>
+        <text x="900" y="288" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(255,255,255,0.5)">XAMPP</text>
+        <text x="900" y="306" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="rgba(255,255,255,0.5)">InnoDB</text>
+    </g>
+
+    <!-- ═══ FLOW ARROWS ═════════════════════════════════════ -->
+    <!-- Browser → Router (HTTP request) -->
+    <path class="flow-path" d="M 150 92 L 213 92" stroke="#2EC4B6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <text x="181" y="88" text-anchor="middle" class="flow-label">HTTP</text>
+
+    <!-- Router → Controllers -->
+    <path d="M 280 125 L 280 148" stroke="rgba(100,149,237,0.5)" stroke-width="1.5" stroke-dasharray="4 2"/>
+
+    <!-- Controllers → Models -->
+    <path d="M 280 215 L 280 236" stroke="rgba(100,149,237,0.5)" stroke-width="1.5" stroke-dasharray="4 2"/>
+
+    <!-- Models → Views -->
+    <path d="M 280 303 L 280 324" stroke="rgba(100,149,237,0.5)" stroke-width="1.5" stroke-dasharray="4 2"/>
+
+    <!-- Views → Browser (response) -->
+    <path class="flow-path-reverse" d="M 215 358 L 152 358 L 152 110 L 150 110" stroke="#2EC4B6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+    <text x="185" y="345" class="flow-label">HTML</text>
+
+    <!-- Controllers → API -->
+    <path class="flow-path" d="M 345 183 L 358 227" stroke="#FF6B1A" stroke-width="2" marker-end="url(#arrowOrange)"/>
+    <text x="365" y="208" class="flow-label">REST</text>
+
+    <!-- API → OCR -->
+    <path class="flow-path" d="M 480 215 L 568 98" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowPurple)"/>
+    <text x="524" y="145" class="flow-label">JSON</text>
+
+    <!-- API → FaceID -->
+    <path class="flow-path" d="M 480 225 L 568 188" stroke="#7c3aed" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+
+    <!-- API → Fraud -->
+    <path class="flow-path" d="M 480 235 L 568 278" stroke="#7c3aed" stroke-width="1.8" marker-end="url(#arrowPurple)"/>
+
+    <!-- API → Chatbot -->
+    <path class="flow-path" d="M 480 245 L 568 368" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrowPurple)"/>
+
+    <!-- Models → MySQL -->
+    <path class="flow-path" d="M 345 271 L 866 250" stroke="#EF9F27" stroke-width="2" marker-end="url(#arrowGold)"/>
+    <text x="600" y="258" class="flow-label">SQL/PDO</text>
+
+    <!-- Face client → FaceID -->
+    <path d="M 90 305 L 90 420 L 600 420 L 600 220 L 568 188" stroke="rgba(46,196,182,0.3)" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrowBlue)"/>
+
+    <!-- ═══ PORT BADGES ════════════════════════════════════ -->
+    <rect x="775" y="76" width="54" height="20" rx="6" fill="rgba(124,58,237,0.3)"/>
+    <text x="802" y="90" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" fill="rgba(255,255,255,0.9)">:5007</text>
+
+    <rect x="775" y="166" width="54" height="20" rx="6" fill="rgba(124,58,237,0.3)"/>
+    <text x="802" y="180" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" fill="rgba(255,255,255,0.9)">:5000</text>
+
+    <rect x="775" y="256" width="54" height="20" rx="6" fill="rgba(124,58,237,0.3)"/>
+    <text x="802" y="270" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" fill="rgba(255,255,255,0.9)">:5006</text>
+</svg>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#2EC4B6;"></div>Flux HTTP / Réponse</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FF6B1A;"></div>Appels internes PHP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7c3aed;"></div>Microservices Flask (JSON)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EF9F27;"></div>Base de données MySQL</div>
+</div>
+
+<!-- Flow Table -->
+<div class="flow-table">
+    <h3>Tableau des flux de données</h3>
+    <table>
+        <thead><tr><th>Source</th><th>Destination</th><th>Protocole</th><th>Données</th></tr></thead>
+        <tbody>
+            <tr><td>Navigateur</td><td>PHP Router</td><td>HTTP/HTTPS</td><td>Formulaires, sessions, cookies</td></tr>
+            <tr><td>PHP Controllers</td><td>Models (PDO)</td><td>Interne</td><td>Requêtes SQL, entités métier</td></tr>
+            <tr><td>PHP API Gateway</td><td>Flask OCR <code>:5007</code></td><td>HTTP JSON</td><td>Image base64 → texte extrait</td></tr>
+            <tr><td>PHP API Gateway</td><td>Flask Face ID <code>:5000</code></td><td>HTTP JSON</td><td>Photo → vecteur biométrique</td></tr>
+            <tr><td>PHP API Gateway</td><td>Flask Fraude <code>:5006</code></td><td>HTTP JSON</td><td>Description → score 0-100</td></tr>
+            <tr><td>PHP API Gateway</td><td>LLaMA Chatbot</td><td>HTTP JSON</td><td>Prompt → réponse NLP</td></tr>
+            <tr><td>PHP Models</td><td>MySQL <code>:3306</code></td><td>PDO (TCP)</td><td>CRUD utilisateurs, contrats, sinistres</td></tr>
+            <tr><td>Stripe JS</td><td>Stripe API</td><td>HTTPS</td><td>Token de paiement sécurisé</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+/* ── Node tooltips ─────────────────────────────────────── */
+const NODE_DATA = {
+    browser:      { title: '🌐 Navigateur Client', body: 'Interface utilisateur Bootstrap 5, animations CSS, Chart.js, Face ID via webcam.', tech: ['Bootstrap 5','JS Vanilla','Chart.js','face-api.js'] },
+    chartjs:      { title: '📊 Chart.js', body: 'Graphiques interactifs : sinistres par mois, contrats par type, distribution fraude.', tech: ['Chart.js 4','Doughnut','Bar','Line'] },
+    stripe:       { title: '💳 Stripe API', body: 'Paiement sécurisé des primes. Token Stripe JS → PHP Stripe SDK.', tech: ['Stripe.js','PHP SDK','Webhooks'] },
+    'face-client':{ title: '📸 Face ID Client', body: 'Capture webcam en JS, envoi base64 au microservice Flask Face ID sur :5000.', tech: ['getUserMedia()','Canvas','base64','fetch'] },
+    router:       { title: '⚙️ PHP Router', body: 'Aiguillage des requêtes HTTP vers les contrôleurs. Gère la session, le CSRF et le rate limiting.', tech: ['PHP 8.1','bootstrap.php','SessionGuard','RateLimiter'] },
+    controllers:  { title: '🎮 Controllers', body: 'Logique métier : ContratController, SinistreController, UserController, etc.', tech: ['ContratController','SinistreController','UserController','DevisController'] },
+    models:       { title: '📦 Models', body: 'Entités PDO mappant les tables MySQL. Validations et getters/setters.', tech: ['Contrat.php','Sinistre.php','User.php','PDO'] },
+    views:        { title: '🖼️ Views PHP', body: 'Templates PHP FrontOffice & BackOffice. CSS/JS intégrés par page.', tech: ['FrontOffice','BackOffice','theme.css','Bootstrap 5'] },
+    api:          { title: '🔗 API Gateway', body: 'Point d\'entrée REST unique. Authentifie, limite le débit, délègue aux microservices Flask.', tech: ['api.php','JSON','RateLimiter','CORS'] },
+    ocr:          { title: '📄 Flask OCR :5007', body: 'Extraction de texte depuis images (Tesseract + OpenCV). Retourne JSON avec le texte reconnu.', tech: ['Flask','Tesseract','OpenCV','pytesseract'] },
+    faceid:       { title: '👁️ Flask Face ID :5000', body: 'Reconnaissance faciale avec face_recognition. Encode et compare les visages.', tech: ['Flask','face_recognition','dlib','NumPy'] },
+    fraud:        { title: '🛡️ Fraude + CAPTCHA :5006', body: 'Score de fraude 0-100 via LLaMA + scikit-learn. CAPTCHA mathématique généré en Python.', tech: ['Flask','LLaMA','scikit-learn','Pillow'] },
+    chatbot:      { title: '🤖 LLaMA Chatbot', body: 'Assistant IA en langage naturel sur les produits Protex. Modèle local via Ollama.', tech: ['Ollama','LLaMA 3','Flask','Streaming'] },
+    mysql:        { title: '🗄️ MySQL :3306', body: 'Base de données relationnelle XAMPP. Tables : users, contrats, sinistres, devis, paiements, postes.', tech: ['MySQL 8','InnoDB','PDO','XAMPP'] },
+};
+
+const tooltip  = document.getElementById('tooltip');
+const ttTitle  = document.getElementById('tooltip-title');
+const ttBody   = document.getElementById('tooltip-body');
+const ttTech   = document.getElementById('tooltip-tech');
+
+document.querySelectorAll('.arch-node').forEach(node => {
+    node.addEventListener('mouseenter', (e) => {
+        const key  = node.dataset.node;
+        const data = NODE_DATA[key];
+        if (!data) return;
+        ttTitle.textContent = data.title;
+        ttBody.textContent  = data.body;
+        ttTech.innerHTML    = (data.tech || []).map(t => `<span class="tech-pill">${t}</span>`).join('');
+        tooltip.classList.add('show');
+        moveTooltip(e);
+    });
+    node.addEventListener('mousemove', moveTooltip);
+    node.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+});
+
+function moveTooltip(e) {
+    const x = e.clientX + 18, y = e.clientY - 10;
+    const w = tooltip.offsetWidth, h = tooltip.offsetHeight;
+    tooltip.style.left = (x + w > window.innerWidth  ? x - w - 30 : x) + 'px';
+    tooltip.style.top  = (y + h > window.innerHeight ? y - h - 10 : y) + 'px';
+}
+</script>
+</body>
+</html>

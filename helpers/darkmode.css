@@ -1,0 +1,165 @@
+/* ============================================================
+   darkmode.css — Protex Dark Theme
+   Overrides for Bootstrap + Protex components
+   ============================================================ */
+
+[data-theme="dark"] {
+  --bg:            #0F1117;
+  --bg-alt:        #1A1D27;
+  --card:          #1E2130;
+  --card-hover:    #252838;
+  --text:          #E8ECF4;
+  --text-secondary:#94A3B8;
+  --text-muted:    #64748B;
+  --border:        rgba(255, 255, 255, 0.08);
+  --border-light:  rgba(255, 255, 255, 0.04);
+
+  --shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md:     0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg:     0 8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-xl:     0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .card,
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .dropdown-menu {
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .glass-card {
+  background: rgba(30, 33, 48, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+[data-theme="dark"] .navbar,
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] nav {
+  background-color: var(--bg-alt) !important;
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .table {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .table thead th {
+  background-color: var(--bg-alt) !important;
+  border-color: var(--border) !important;
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table th {
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+  background-color: var(--card-hover) !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] textarea {
+  background-color: var(--bg-alt) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  border-color: var(--primary-light) !important;
+  box-shadow: 0 0 0 3px rgba(43, 94, 167, 0.2) !important;
+}
+
+[data-theme="dark"] .btn-outline-secondary,
+[data-theme="dark"] .btn-light {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+  background-color: var(--bg-alt) !important;
+}
+
+[data-theme="dark"] .text-dark,
+[data-theme="dark"] h1, [data-theme="dark"] h2,
+[data-theme="dark"] h3, [data-theme="dark"] h4,
+[data-theme="dark"] h5, [data-theme="dark"] h6 {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .text-muted {
+  color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-light {
+  background-color: var(--card) !important;
+}
+
+[data-theme="dark"] .border {
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .list-group-item {
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .offcanvas,
+[data-theme="dark"] .offcanvas-header {
+  background-color: var(--bg-alt) !important;
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] a:not(.btn):not(.nav-link):not(.dropdown-item) {
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] hr {
+  border-color: var(--border) !important;
+  opacity: 0.5;
+}
+
+/* — Dark mode toggle button — */
+.darkmode-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--card);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+
+.darkmode-toggle:hover {
+  transform: scale(1.1) rotate(15deg);
+  box-shadow: var(--shadow-lg);
+}
+
+.darkmode-toggle .icon-sun,
+.darkmode-toggle .icon-moon {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  position: absolute;
+}
+
+[data-theme="dark"] .darkmode-toggle .icon-sun  { opacity: 1; transform: rotate(0deg); }
+[data-theme="dark"] .darkmode-toggle .icon-moon { opacity: 0; transform: rotate(-90deg); }
+[data-theme="light"] .darkmode-toggle .icon-sun,
+:root:not([data-theme="dark"]) .darkmode-toggle .icon-sun  { opacity: 0; transform: rotate(90deg); }
+[data-theme="light"] .darkmode-toggle .icon-moon,
+:root:not([data-theme="dark"]) .darkmode-toggle .icon-moon { opacity: 1; transform: rotate(0deg); }

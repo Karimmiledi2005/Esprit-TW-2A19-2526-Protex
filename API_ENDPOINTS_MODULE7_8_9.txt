@@ -1,0 +1,251 @@
+// MODULE 7: PAIEMENT - API ENDPOINTS (to be added to api.php switch statement)
+
+    // MODULE 7: Paiement Dashboard (P1)
+    case 'paiement_dashboard_stats':
+        require_once __DIR__ . '/helpers/RoleHelper.php';
+        $idAgence = RoleHelper::getAgenceId();
+        $isSuperAdmin = RoleHelper::isSuperAdmin();
+
+        $wherePaiement = "1=1";
+        $whereContrat = "1=1";
+        $paramsPaiement = [];
+        $paramsContrat = [];
+
+        if (!$isSuperAdmin && $idAgence) {
+            $wherePaiement = "p.id_agence = :agence";
+            $whereContrat = "c.id_agence = :agence";
+            $paramsPaiement['agence'] = $idAgence;
+            $paramsContrat['agence'] = $idAgence;
+        }
+
+        try {
+            // CA ce mois
+            $stmtCA = $db->prepare("SELECT COALESCE(SUM(p.montant), 0) as ca FROM paiement p WHERE p.statut = 'valide' AND MONTH(p.date_paiement) = MONTH(NOW()) AND YEAR(p.date_paiement) = YEAR(NOW()) AND $wherePaiement");
+            $stmtCA->execute($paramsPaiement);
+            $caMois = (float)($stmtCA->fetchColumn() ?? 0);
+
+            // CA cumulé année
+            $stmtCAAnnee = $db->prepare("SELECT COALESCE(SUM(p.montant), 0) as ca FROM paiement p WHERE p.statut = 'valide' AND YEAR(p.date_paiement) = YEAR(NOW()) AND $wherePaiement");
+            $stmtCAAnnee->execute($paramsPaiement);
+            $caAnnee = (float)($stmtCAAnnee->fetchColumn() ?? 0);
+
+            // Paiements en retard
+            $stmtRetard = $db->prepare("SELECT COUNT(DISTINCT c.id_contrat) FROM contrat c WHERE c.statut_contrat = 'actif' AND c.date_echeance_contrat < NOW() AND c.id_contrat NOT IN (SELECT DISTINCT p.id_offre FROM paiement p WHERE p.statut = 'valide' AND MONTH(p.date_paiement) = MONTH(NOW()) AND YEAR(p.date_paiement) = YEAR(NOW())) AND $whereContrat");
+            $stmtRetard->execute($paramsContrat);
+            $retards = (int)($stmtRetard->fetchColumn() ?? 0);
+
+            // Taux de recouvrement
+            $stmtExpected = $db->prepare("SELECT COALESCE(SUM(c.prime_contrat), 0) FROM contrat c WHERE c.statut_contrat = 'actif' AND MONTH(c.date_creation_contrat) = MONTH(NOW()) AND YEAR(c.date_creation_contrat) = YEAR(NOW()) AND $whereContrat");
+            $stmtExpected->execute($paramsContrat);
+            $expected = (float)($stmtExpected->fetchColumn() ?? 0);
+            $tauxRecouvrement = $expected > 0 ? min(100, round(($caMois / $expected) * 100)) : 0;
+
+            // CA mensuel (12 mois)
+            $stmtMensuel = $db->prepare("SELECT DATE_FORMAT(p.date_paiement, '%Y-%m') as mois, SUM(p.montant) as total FROM paiement p WHERE p.statut = 'valide' AND p.date_paiement >= DATE_SUB(NOW(), INTERVAL 12 MONTH) AND $wherePaiement GROUP BY mois ORDER BY mois ASC");
+            $stmtMensuel->execute($paramsPaiement);
+            $caMensuel = $stmtMensuel->fetchAll(PDO::FETCH_ASSOC);
+            $caMensuelLabels = array_column($caMensuel, 'mois');
+            $caMensuelData = array_column($caMensuel, 'total');
+
+            // Répartition par type offre
+            $stmtRepart = $db->prepare("SELECT COALESCE(cat.nom_categorie, 'Autre') as type, SUM(p.montant) as total FROM paiement p LEFT JOIN contrat c ON p.id_offre = c.id_contrat LEFT JOIN categorie cat ON c.id_categorie = cat.id_categorie WHERE p.statut = 'valide' AND $wherePaiement GROUP BY cat.nom_categorie");
+            $stmtRepart->execute($paramsPaiement);
+            $repartition = $stmtRepart->fetchAll(PDO::FETCH_ASSOC);
+            $repartLabels = array_column($repartition, 'type');
+            $repartData = array_column($repartition, 'total');
+
+            // Paiements à temps vs en retard par mois
+            $stmtPunctualite = $db->prepare("SELECT DATE_FORMAT(p.date_paiement, '%Y-%m') as mois, SUM(CASE WHEN (p.date_paiement <= c.date_echeance_contrat OR c.date_echeance_contrat IS NULL) THEN 1 ELSE 0 END) AS a_temps, SUM(CASE WHEN (p.date_paiement > c.date_echeance_contrat AND c.date_echeance_contrat IS NOT NULL) THEN 1 ELSE 0 END) AS en_retard FROM paiement p LEFT JOIN contrat c ON p.id_offre = c.id_contrat WHERE p.statut = 'valide' AND p.date_paiement >= DATE_SUB(NOW(), INTERVAL 12 MONTH) AND $wherePaiement GROUP BY mois ORDER BY mois");
+            $stmtPunctualite->execute($paramsPaiement);
+            $punctualite = $stmtPunctualite->fetchAll(PDO::FETCH_ASSOC);
+            $punctLabels = array_column($punctualite, 'mois');
+            $punctOntime = array_column($punctualite, 'a_temps');
+            $punctLate = array_column($punctualite, 'en_retard');
+
+            // Top 5 clients
+            $stmtTopClients = $db->prepare("SELECT u.id_user, u.nom, u.prenom, COUNT(DISTINCT c.id_contrat) as contrats_actifs, SUM(p.montant) as ca_total, SUM(CASE WHEN MONTH(p.date_paiement) = MONTH(NOW()) THEN p.montant ELSE 0 END) as ca_mois FROM paiement p LEFT JOIN contrat c ON p.id_offre = c.id_contrat LEFT JOIN `user` u ON c.id_client = u.id_user WHERE p.statut = 'valide' AND $wherePaiement GROUP BY u.id_user ORDER BY ca_total DESC LIMIT 5");
+            $stmtTopClients->execute($paramsPaiement);
+            $topClients = $stmtTopClients->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'ca_mois' => round($caMois, 2),
+                    'ca_annuel' => round($caAnnee, 2),
+                    'retard_count' => $retards,
+                    'taux_recouvrement' => $tauxRecouvrement,
+                    'ca_mensuel_labels' => $caMensuelLabels,
+                    'ca_mensuel_data' => $caMensuelData,
+                    'offre_type_labels' => $repartLabels,
+                    'offre_type_data' => $repartData,
+                    'paiement_status_labels' => $punctLabels,
+                    'paiement_status_ontime' => $punctOntime,
+                    'paiement_status_late' => $punctLate,
+                    'top_clients' => $topClients
+                ]
+            ], JSON_UNESCAPED_UNICODE);
+        } catch (Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        break;
+
+    // MODULE 7: Upcoming payment alerts (P6)
+    case 'upcoming_payments':
+        $idUser = (int)$_SESSION['user_id'];
+        $stmt = $db->prepare("
+            SELECT c.id_contrat, c.numero_contrat, c.prime_contrat, c.date_echeance_contrat,
+                   DATEDIFF(c.date_echeance_contrat, NOW()) as jours_restants
+            FROM contrat c
+            WHERE c.id_client = ? AND c.statut_contrat = 'actif'
+            AND c.date_echeance_contrat BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 7 DAY)
+            ORDER BY c.date_echeance_contrat ASC
+        ");
+        $stmt->execute([$idUser]);
+        $upcoming = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode(['success' => true, 'data' => $upcoming], JSON_UNESCAPED_UNICODE);
+        break;
+
+// MODULE 8: RÉCLAMATION - API ENDPOINTS
+
+    // RC3: Escalate reclamation
+    case 'escalader_reclamation':
+        require_once __DIR__ . '/helpers/RoleHelper.php';
+        if (!in_array(RoleHelper::getRole(), ['superadmin', 'admin'])) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Accès refusé']); break;
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); break; }
+        
+        $idReclamation = (int)($_POST['id'] ?? 0);
+        $db->prepare("UPDATE reclamation SET escalade = 1, escalade_at = NOW(), escalade_par = ? WHERE id_reclamation = ?")->execute([$_SESSION['user_id'], $idReclamation]);
+        echo json_encode(['success' => true]);
+        break;
+
+    // RC5: Save satisfaction rating
+    case 'save_satisfaction':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); break; }
+        $idReclamation = (int)($_POST['id_reclamation'] ?? 0);
+        $note = (int)($_POST['note'] ?? 0);
+        $commentaire = $_POST['commentaire'] ?? '';
+        
+        $db->prepare("INSERT INTO reclamation_satisfaction (id_reclamation, note, commentaire) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE note = VALUES(note), commentaire = VALUES(commentaire)")->execute([$idReclamation, $note, $commentaire]);
+        echo json_encode(['success' => true]);
+        break;
+
+    // RC6: AI-assisted reclamation writing
+    case 'ai_assist_reclamation':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); break; }
+        $situation = $_POST['situation'] ?? '';
+        
+        if (empty($situation)) {
+            echo json_encode(['error' => 'Situation requise']); break;
+        }
+        
+        try {
+            require_once __DIR__ . '/controller/ChatbotController.php';
+            $controller = new ChatbotController($db);
+            $response = $controller->generateResponse(
+                "Tu es un assistant qui aide les clients à rédiger des réclamations professionnelles et claires en français. Rédige une réclamation formelle basée sur cette situation: " . $situation,
+                $_SESSION['user_id']
+            );
+            echo json_encode(['success' => true, 'text' => $response], JSON_UNESCAPED_UNICODE);
+        } catch (Throwable $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        break;
+
+// MODULE 9: AGENCE - API ENDPOINTS
+
+    // A3: Save agency opening hours
+    case 'save_agence_horaires':
+        require_once __DIR__ . '/helpers/RoleHelper.php';
+        if (!in_array(RoleHelper::getRole(), ['superadmin', 'admin'])) {
+            http_response_code(403); echo json_encode(['error' => 'Accès refusé']); break;
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); break; }
+        
+        $idAgence = (int)($_POST['id_agence'] ?? 0);
+        
+        for ($jour = 1; $jour <= 7; $jour++) {
+            $ferme = (bool)($_POST["jour_{$jour}_ferme"] ?? false);
+            $heure_ouverture = $_POST["jour_{$jour}_ouverture"] ?? null;
+            $heure_fermeture = $_POST["jour_{$jour}_fermeture"] ?? null;
+            
+            $db->prepare("INSERT INTO agence_horaires (id_agence, jour, heure_ouverture, heure_fermeture, ferme) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE heure_ouverture = VALUES(heure_ouverture), heure_fermeture = VALUES(heure_fermeture), ferme = VALUES(ferme)")
+                ->execute([$idAgence, $jour, $heure_ouverture, $heure_fermeture, $ferme ? 1 : 0]);
+        }
+        
+        echo json_encode(['success' => true]);
+        break;
+
+    // A5: Create appointment
+    case 'creer_rdv':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); break; }
+        
+        $idAgence = (int)($_POST['id_agence'] ?? 0);
+        $dateRdv = $_POST['date_rdv'] ?? '';
+        $motif = $_POST['motif'] ?? '';
+        $idUser = (int)$_SESSION['user_id'];
+        
+        $db->prepare("INSERT INTO rendez_vous (id_agence, id_client, date_rdv, motif) VALUES (?, ?, ?, ?)")
+            ->execute([$idAgence, $idUser, $dateRdv, $motif]);
+        
+        echo json_encode(['success' => true]);
+        break;
+
+    // A5: Get available appointment slots
+    case 'disponibilites_agence':
+        $idAgence = (int)($_GET['id'] ?? 0);
+        $date = $_GET['date'] ?? date('Y-m-d');
+        
+        // Simple: return 9-17h in 30min slots, minus booked times
+        $stmt = $db->prepare("SELECT date_rdv FROM rendez_vous WHERE id_agence = ? AND DATE(date_rdv) = ?");
+        $stmt->execute([$idAgence, $date]);
+        $booked = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $bookedTimes = array_map(fn($r) => substr($r['date_rdv'], 11, 5), $booked);
+        
+        $slots = [];
+        for ($h = 9; $h < 17; $h++) {
+            for ($m = 0; $m < 60; $m += 30) {
+                $time = sprintf('%02d:%02d', $h, $m);
+                if (!in_array($time, $bookedTimes)) {
+                    $slots[] = $time;
+                }
+            }
+        }
+        
+        echo json_encode(['success' => true, 'slots' => $slots]);
+        break;
+
+    // A6: Add agency rating
+    case 'add_agence_avis':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); break; }
+        
+        $idAgence = (int)($_POST['id_agence'] ?? 0);
+        $note = (int)($_POST['note'] ?? 0);
+        $commentaire = $_POST['commentaire'] ?? '';
+        $idUser = (int)$_SESSION['user_id'];
+        
+        $db->prepare("INSERT INTO agence_avis (id_agence, id_client, note, commentaire) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE note = VALUES(note), commentaire = VALUES(commentaire)")
+            ->execute([$idAgence, $idUser, $note, $commentaire]);
+        
+        echo json_encode(['success' => true]);
+        break;
+
+    // A6: Reply to agency rating
+    case 'repondre_agence_avis':
+        require_once __DIR__ . '/helpers/RoleHelper.php';
+        if (!in_array(RoleHelper::getRole(), ['superadmin', 'admin'])) {
+            http_response_code(403); echo json_encode(['error' => 'Accès refusé']); break;
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); break; }
+        
+        $idAvis = (int)($_POST['id'] ?? 0);
+        $reponse = $_POST['reponse'] ?? '';
+        
+        $db->prepare("UPDATE agence_avis SET reponse_admin = ? WHERE id = ?")
+            ->execute([$reponse, $idAvis]);
+        
+        echo json_encode(['success' => true]);
+        break;

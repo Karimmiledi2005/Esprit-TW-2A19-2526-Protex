@@ -1,0 +1,75 @@
+/* =============================================
+   light-theme.css — Variables CSS thème clair
+   FrontOffice Protex Assurance
+   ============================================= */
+
+:root {
+    /* ── Polices ── */
+    --font-display: 'Sora', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+
+    /* ── Couleurs de fond (thème clair) ── */
+    --navy:           #f0f4f8;
+    --navy-soft:      #cbd5e1;
+    --navy-mid:       #94a3b8;
+    --bg-gradient-1:  #e8edf5;
+    --bg-gradient-2:  #dce6f0;
+    --bg-gradient-3:  #f0f4fb;
+
+    /* ── Texte ── */
+    --text-primary:   #15233c;
+    --text-secondary: #4e6080;
+
+    /* ── Couleur principale (bleu Protex) ── */
+    --accent:         #1a3a7a;
+    --accent-dark:    #122a5e;
+    --accent-glow:    rgba(26, 58, 122, 0.08);
+
+    /* ── Orange Protex ── */
+    --orange:         #FF6B1A;
+    --orange-dark:    #e05a0f;
+    --orange-glow:    rgba(255, 107, 26, 0.10);
+
+    /* ── États ── */
+    --success:  #16a34a;
+    --warning:  #d97706;
+    --danger:   #dc2626;
+    --gold:     #f59e0b;
+
+    /* ── Glassmorphism (adapté thème clair) ── */
+    --glass-bg:     rgba(255, 255, 255, 0.80);
+    --glass-border: rgba(26, 58, 122, 0.10);
+    --border:       rgba(26, 58, 122, 0.10);
+
+    /* ── Orbes de fond ── */
+    --orb-emerald: rgba(26, 58, 122, 0.15);
+    --orb-gold:    rgba(255, 107, 26, 0.12);
+    --orb-coral:   rgba(244, 162, 97, 0.10);
+
+    /* ── Rayons ── */
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+
+    /* ── Transition globale ── */
+    --transition: all 0.2s ease;
+
+    /* ── Ombres ── */
+    --shadow-sm:  0 2px 8px rgba(26, 58, 122, 0.08);
+    --shadow-md:  0 8px 24px rgba(26, 58, 122, 0.10);
+    --shadow-lg:  0 18px 45px rgba(26, 58, 122, 0.12);
+}
+
+/* Fond général clair */
+body {
+    background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+}
+
+/* Scrollbar adaptée thème clair */
+::-webkit-scrollbar-track { background: #f0f4f8; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Titres en couleur foncée sur fond clair */
+h1, h2, h3, h4, h5, h6 { color: var(--text-primary); }

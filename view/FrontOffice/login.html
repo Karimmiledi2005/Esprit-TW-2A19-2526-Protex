@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protex - Authentication</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="templatemo-glass-admin-style.css">
+    <link rel="stylesheet" href="user/css/validation.css">
+
+
+    <style>
+        /* ===== DOUBLE SLIDE AUTH STYLES ===== */
+        .auth-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+            width: 900px;
+            max-width: 100%;
+            min-height: 600px;
+            display: flex;
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            /* For tall forms */
+        }
+
+        /* Scrollbar styling for form containers */
+        .form-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .form-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .form-container::-webkit-scrollbar-thumb {
+            background: rgba(0, 180, 216, 0.3);
+            border-radius: 10px;
+        }
+
+        .sign-in-container {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+        }
+
+        .sign-up-container {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+            transform: translateX(100%);
+        }
+
+        .auth-container.right-panel-active .sign-in-container {
+            transform: translateX(-100%);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .auth-container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+        }
+
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .auth-container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.8), rgba(10, 15, 30, 0.8));
+            backdrop-filter: blur(10px);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 0 0;
+            color: #FFFFFF;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .auth-container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .auth-container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .auth-container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        .auth-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .auth-subtitle {
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+        }
+
+        .overlay-panel h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .overlay-panel p {
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-ghost:hover {
+            background: #fff;
+            color: #00b4d8;
+        }
+
+        .grid-2-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .social-login-mini {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .social-btn-mini {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .social-btn-mini:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .social-btn-mini svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                min-height: 800px;
+                flex-direction: column;
+            }
+
+            .sign-in-container,
+            .sign-up-container {
+                width: 100%;
+                height: 50%;
+                padding: 20px;
+            }
+
+            .sign-up-container {
+                transform: translateY(100%);
+                left: 0;
+                top: auto;
+                bottom: 0;
+            }
+
+            .auth-container.right-panel-active .sign-in-container {
+                transform: translateY(-100%);
+            }
+
+            .auth-container.right-panel-active .sign-up-container {
+                transform: translateY(0);
+                opacity: 1;
+                z-index: 5;
+            }
+
+            .overlay-container {
+                width: 100%;
+                height: 50%;
+                left: 0;
+                top: 50%;
+            }
+
+            .auth-container.right-panel-active .overlay-container {
+                transform: translateY(-100%);
+            }
+
+            .overlay {
+                width: 100%;
+                height: 200%;
+                left: 0;
+                top: -100%;
+                flex-direction: column;
+            }
+
+            .auth-container.right-panel-active .overlay {
+                transform: translateY(50%);
+            }
+
+            .overlay-panel {
+                width: 100%;
+                height: 50%;
+                padding: 20px;
+            }
+
+            .overlay-left {
+                transform: translateY(-20%);
+            }
+
+            .overlay-right {
+                top: auto;
+                bottom: 0;
+                transform: translateY(0);
+            }
+
+            .auth-container.right-panel-active .overlay-right {
+                transform: translateY(20%);
+            }
+        }
+
+        /* ===== MODAL FORGOT PASSWORD ===== */
+        .forgot-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .forgot-modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .forgot-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+
+        .forgot-modal.show .forgot-card {
+            transform: translateY(0);
+        }
+
+        .forgot-icon {
+            font-size: 40px;
+            color: #00b4d8;
+            margin-bottom: 15px;
+        }
+
+        .step-container {
+            display: none;
+        }
+
+        .step-container.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 45px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .otp-input:focus {
+            border-color: #00b4d8;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+        }
+
+        /* Face ID specific */
+        .face-id-modal {
+            /* Reuse existing styles from original login.html but kept hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .face-id-modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .face-id-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 35px 30px;
+            width: 320px;
+            text-align: center;
+        }
+
+        .scanner-container {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(0, 180, 216, 0.4);
+        }
+
+        .scanner-container video,
+        #loginVideo,
+        #setupFaceVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #00b4d8;
+            animation: scan 2.5s infinite alternate;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0%;
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes faceRingSpin {
+            0% {
+                transform: rotate(0deg);
+                border-top-color: var(--accent);
+            }
+
+            50% {
+                transform: rotate(180deg);
+                border-top-color: transparent;
+            }
+
+            100% {
+                transform: rotate(360deg);
+                border-top-color: var(--accent);
+            }
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        /* ===== NEW ANIMATIONS ===== */
+        @media (prefers-reduced-motion: no-preference) {
+
+            /* Cursor */
+            body {
+                cursor: none;
+            }
+
+            #ptx_cursor_dot {
+                width: 8px;
+                height: 8px;
+                background: #FF6B1A;
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 99999;
+                transform: translate(-50%, -50%);
+                transition: transform 0.2s ease, background 0.2s ease;
+            }
+
+            #ptx_cursor_ring {
+                width: 32px;
+                height: 32px;
+                border: 2px solid rgba(255, 107, 26, 0.6);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 99998;
+                transform: translate(-50%, -50%);
+                transition: top 0.12s ease, left 0.12s ease, transform 0.2s ease, border-color 0.2s ease;
+            }
+
+            /* Waves */
+            #ptx_waves_container {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 120px;
+                z-index: 0;
+                pointer-events: none;
+                overflow: hidden;
+            }
+
+            .ptx_wave {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 200%;
+                height: 100%;
+                animation: ptx_wave_anim linear infinite;
+                transform-origin: bottom;
+            }
+
+            .ptx_wave svg {
+                width: 100%;
+                height: 100%;
+            }
+
+            .ptx_wave:nth-child(1) {
+                animation-duration: 8s;
+                opacity: 0.08;
+                fill: #FF6B1A;
+            }
+
+            .ptx_wave:nth-child(2) {
+                animation-duration: 12s;
+                opacity: 0.10;
+                fill: #1A3A7A;
+            }
+
+            .ptx_wave:nth-child(3) {
+                animation-duration: 6s;
+                opacity: 0.05;
+                fill: #FF6B1A;
+            }
+
+            @keyframes ptx_wave_anim {
+                0% {
+                    transform: translateX(0);
+                }
+
+                100% {
+                    transform: translateX(-50%);
+                }
+            }
+
+            /* ===== OVERLAY RIGHT NEW ELEMENTS ===== */
+            @keyframes ptx-fadeInLeft {
+                from {
+                    opacity: 0;
+                    transform: translateX(-16px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            @keyframes ptx-blink {
+
+                0%,
+                100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0;
+                }
+            }
+
+            #ptx-typewriter {
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.7);
+                font-style: italic;
+                margin-bottom: 16px;
+                min-height: 20px;
+            }
+
+            #ptx-typewriter::after {
+                content: '|';
+                animation: ptx-blink 0.7s step-end infinite;
+            }
+
+            #ptx-avantages {
+                list-style: none;
+                padding: 0;
+                margin: 0 0 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                text-align: left;
+            }
+
+            .ptx-avantage-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.85);
+                animation: ptx-fadeInLeft 0.4s ease both;
+            }
+
+            .ptx-avantage-item:nth-child(1) {
+                animation-delay: 0.1s;
+            }
+
+            .ptx-avantage-item:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .ptx-avantage-item:nth-child(3) {
+                animation-delay: 0.3s;
+            }
+
+            .ptx-avantage-item:nth-child(4) {
+                animation-delay: 0.4s;
+            }
+
+            .ptx-icon-circle {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background: rgba(255, 107, 26, 0.2);
+                border: 1px solid rgba(255, 107, 26, 0.4);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+
+            #ptx-stats {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 24px;
+                background: rgba(0, 0, 0, 0.15);
+                border-radius: 12px;
+                padding: 12px;
+                width: 100%;
+            }
+
+            .ptx-stat-item {
+                text-align: center;
+            }
+
+            .ptx-stat-val {
+                font-size: 20px;
+                font-weight: 700;
+                color: #FF6B1A;
+                display: block;
+                line-height: 1.2;
+            }
+
+            .ptx-stat-lbl {
+                font-size: 10px;
+                color: rgba(255, 255, 255, 0.5);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+            }
+
+            @media (max-width: 768px) {
+                .overlay-right {
+                    justify-content: flex-start;
+                    padding-top: 10px;
+                    overflow-y: auto;
+                }
+
+                #ptx-stats {
+                    margin-bottom: 10px;
+                }
+
+                #ptx-avantages {
+                    margin-bottom: 10px;
+                }
+
+                #ptx-typewriter {
+                    margin-bottom: 5px;
+                }
+
+                .overlay-panel h1 {
+                    margin-bottom: 5px;
+                    font-size: 24px;
+                }
+            }
+        }
+
+        /* ===== COOKIE BANNER ===== */
+        #ptx-cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 99999;
+            background: rgba(10, 15, 30, 0.97);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 107, 26, 0.3);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            transition: transform 0.4s ease;
+        }
+
+        .ptx-cookie-content p {
+            margin: 0;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .ptx-cookie-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .ptx-cookie-btn-refuse,
+        .ptx-cookie-btn-accept {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+        }
+
+        .ptx-cookie-btn-refuse {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: white;
+        }
+
+        .ptx-cookie-btn-refuse:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .ptx-cookie-btn-accept {
+            background: #FF6B1A;
+            color: white;
+            font-weight: 600;
+        }
+
+        .ptx-cookie-btn-accept:hover {
+            background: #ff8c00;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 600px) {
+            #ptx-cookie-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 16px;
+            }
+
+            .ptx-cookie-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <button class="theme-toggle-float" id="theme-toggle" title="Toggle Light/Dark Mode" style="z-index: 1000;">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="M4.93 4.93l1.41 1.41" />
+            <path d="M17.66 17.66l1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="M6.34 17.66l-1.41 1.41" />
+            <path d="M19.07 4.93l-1.41 1.41" />
+        </svg>
+
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+    </button>
+
+    <div class="auth-wrapper">
+        <div class="auth-container" id="authContainer">
+
+            <!-- SIGN UP FORM -->
+            <div class="form-container sign-up-container">
+                <form method="post" action="registre.php" id="registerForm" style="width: 100%;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h1 class="auth-title">Cr&eacute;er un compte</h1>
+                    </div>
+
+                    <div class="step-wizard"
+                        style="display:flex; justify-content:center; align-items:center; gap:0; margin-bottom:32px; padding:0 20px;">
+                        <div class="step-item active" id="step1"
+                            style="display:flex; flex-direction:column; align-items:center; position:relative; flex:1;">
+                            <div class="step-circle"
+                                style="width:36px; height:36px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; z-index:1;">
+                                1</div>
+                            <div style="font-size:10px; color:var(--accent); margin-top:6px; white-space:nowrap;">
+                                &#12968 Identit&eacute;</div>
+                            <div
+                                style="position:absolute; top:18px; left:50%; width:100%; height:2px; background:rgba(255,255,255,0.1);">
+                            </div>
+                        </div>
+                        <div class="step-item" id="step2"
+                            style="display:flex; flex-direction:column; align-items:center; position:relative; flex:1;">
+                            <div class="step-circle"
+                                style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; z-index:1;">
+                                2</div>
+                            <div
+                                style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:6px; white-space:nowrap;">
+                                &#128221; Compte</div>
+                        </div>
+                        <div class="step-item" id="step3"
+                            style="display:flex; flex-direction:column; align-items:center; position:relative; flex:1;">
+                            <div class="step-circle"
+                                style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; z-index:1;">
+                                3</div>
+                            <div
+                                style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:6px; white-space:nowrap;">
+                                &#128065;&#65039; Face ID</div>
+                        </div>
+                        <div class="step-item" id="step4"
+                            style="display:flex; flex-direction:column; align-items:center; flex:1;">
+                            <div class="step-circle"
+                                style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; z-index:1;">
+                                4</div>
+                            <div
+                                style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:6px; white-space:nowrap;">
+                                &#9989; V&eacute;rification</div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="background:rgba(0,180,216,0.08); border:1px dashed rgba(0,180,216,0.3); border-radius:16px; padding:20px; margin-bottom:24px;">
+                        <div style="font-size:14px; font-weight:700; color:#00b4d8; margin-bottom:8px;">
+                            <i class="bi bi-card-image"></i> Remplissage automatique par IA
+                        </div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:16px;">
+                            Uploadez votre CIN ou passeport &mdash; l'IA remplit automatiquement le formulaire
+                        </div>
+
+                        <div id="cinUploadZone"
+                            style="border:2px dashed rgba(255,255,255,0.2); border-radius:12px; padding:30px; text-align:center; cursor:pointer; transition:0.3s;"
+                            onclick="document.getElementById('cinFileInput').click()"
+                            ondragover="event.preventDefault(); this.style.borderColor='#00b4d8'"
+                            ondrop="handleCINDrop(event)">
+                            <i class="bi bi-cloud-upload" style="font-size:32px; color:rgba(255,255,255,0.3);"></i>
+                            <div style="margin-top:8px; color:rgba(255,255,255,0.4); font-size:13px;">Glissez votre CIN
+                                ici ou cliquez</div>
+                            <div style="font-size:11px; color:rgba(255,255,255,0.2); margin-top:4px;">JPG, PNG &mdash;
+                                Max 5MB</div>
+                        </div>
+                        <input type="file" id="cinFileInput" accept="image/*" style="display:none"
+                            onchange="processCINFile(this.files[0])">
+
+                        <div id="cinPreview" style="display:none; margin-top:12px;">
+                            <img id="cinPreviewImg"
+                                style="width:100%; border-radius:10px; max-height:200px; object-fit:cover;">
+                            <div id="cinProcessing" style="text-align:center; margin-top:10px; display:none;">
+                                <div style="color:#00b4d8; font-size:13px;">&#128269; Analyse du document en cours...
+                                </div>
+                                <div
+                                    style="width:100%; height:3px; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:8px; overflow:hidden;">
+                                    <div id="ocrProgress"
+                                        style="height:100%; background:#00b4d8; width:0%; transition:width 2s; border-radius:2px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="cinResult" style="display:none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="form-group">
+                            <input type="text" name="nom" class="form-input" placeholder="Nom" required data-rule="nom">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="prenom" class="form-input" placeholder="Pr&eacute;nom" required
+                                data-rule="prenom">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="email" name="email" id="reg-email" class="form-input" placeholder="Email" required
+                            data-rule="email">
+                        <div id="emailFeedback" style="font-size:11px; margin-top:4px;"></div>
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="form-group">
+                            <input type="text" name="telephone" id="reg-telephone" class="form-input"
+                                placeholder="T&eacute;l&eacute;phone" data-rule="telephone">
+                            <div id="phoneFeedback" style="font-size:11px; color:#2ed573; margin-top:4px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="cin" class="form-input" placeholder="CIN (8 chiffres)"
+                                maxlength="8" data-rule="cin">
+                        </div>
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="form-group">
+                            <input type="text" name="adresse" class="form-input" placeholder="Adresse compl&egrave;te"
+                                data-rule="adresse">
+                        </div>
+                        <div class="form-group">
+                            <input type="date" name="date_naissance" class="form-input" data-rule="date_naissance"
+                                title="Date de naissance">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="agenceSelect">Agence *</label>
+                        <select name="id_agence" id="agenceSelect" class="form-input" required>
+                            <option value="">-- Sélectionner une agence --</option>
+                        </select>
+                        <div id="agenceError" style="font-size:11px; margin-top:4px; color:#ff6b6b; display:none;">
+                        </div>
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="form-group">
+                            <input type="password" name="password" id="reg-password" class="form-input"
+                                placeholder="Mot de passe" required>
+                            <div id="passwordStrength" style="margin-top:8px; display:none;">
+                                <div
+                                    style="height:4px; border-radius:2px; background:rgba(255,255,255,0.1); overflow:hidden;">
+                                    <div id="strengthBar"
+                                        style="height:100%; width:0%; transition:all 0.3s; border-radius:2px;"></div>
+                                </div>
+                                <div id="strengthLabel" style="font-size:11px; margin-top:4px;"></div>
+                                <div id="strengthTips"
+                                    style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:4px;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="confirm_password" class="form-input"
+                                placeholder="Confirmer MDP" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="position: relative;">
+                        <input type="text" name="referral_code" id="reg-referralCode" class="form-input"
+                            placeholder="Code de parrainage (Optionnel)"
+                            style="padding-left: 40px; text-transform:uppercase; letter-spacing:1px;">
+                        <i class="bi bi-gift-fill"
+                            style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ptx-orange); font-size: 18px;"></i>
+                        <div id="referralFeedback"
+                            style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:16px;">
+                        </div>
+                        <div id="referralMsg" style="font-size:11px; margin-top:4px;"></div>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom: 20px; text-align: left; display: flex;">
+                        <label class="checkbox-label" style="margin:0; font-size: 13px;">
+                            <input type="checkbox" required>
+                            J'accepte les <a href="#" style="color: #00b4d8; text-decoration: none;">Conditions</a>
+                        </label>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary"
+                        style="width: 100%; justify-content: center; margin-top: 10px;">
+                        S'inscrire
+                    </button>
+                </form>
+            </div>
+
+            <!-- SIGN IN FORM -->
+            <div class="form-container sign-in-container">
+                <form id="loginform" style="width: 100%;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="logo.png" alt="logo" width="50" height="50" style="margin-bottom:10px">
+                        <h1 class="auth-title">Connexion</h1>
+                        <div class="social-login-mini">
+                            <a href="github_auth.php" class="social-btn-mini" title="Connexion GitHub">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.416-4.041-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Countdown blocage -->
+                    <div id="blockCountdown"
+                        style="display:none; background:rgba(255,71,87,0.1); border:1px solid rgba(255,71,87,0.3); border-radius:10px; padding:12px; text-align:center; color:#ff4757; font-weight:600; font-size:13px; margin-bottom:16px;">
+                    </div>
+
+                    <!-- 3 onglets de connexion -->
+                    <div class="login-tabs"
+                        style="display:flex; background:rgba(255,255,255,0.05); border-radius:12px; padding:4px; margin-bottom:20px; gap:4px;">
+                        <button type="button" onclick="showLoginTab('password')" id="tab-password"
+                            style="flex:1; padding:10px 4px; border:none; border-radius:8px; background:var(--accent); color:#fff; font-weight:600; font-size:12px; cursor:pointer; transition:0.3s;">&#128273;
+                            Mot de passe</button>
+                        <button type="button" onclick="showLoginTab('faceid')" id="tab-faceid"
+                            style="flex:1; padding:10px 4px; border:none; border-radius:8px; background:transparent; color:rgba(255,255,255,0.5); font-weight:600; font-size:12px; cursor:pointer; transition:0.3s;">&#128065;
+                            Face ID</button>
+                        <button type="button" onclick="showLoginTab('otp')" id="tab-otp"
+                            style="flex:1; padding:10px 4px; border:none; border-radius:8px; background:transparent; color:rgba(255,255,255,0.5); font-weight:600; font-size:12px; cursor:pointer; transition:0.3s;">&#128290;
+                            Code rapide</button>
+                    </div>
+
+                    <!-- TAB : Mot de passe -->
+                    <div id="panel-password">
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" class="form-input" placeholder="Email Address"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="password" name="password" class="form-input"
+                                placeholder="Password" required>
+                        </div>
+                        <div class="form-row"
+                            style="margin-bottom: 15px; display: flex; justify-content: space-between;">
+                            <label class="checkbox-label" style="margin:0;">
+                                <input type="checkbox" checked> Remember me
+                            </label>
+                            <a href="#" id="openForgotModal"
+                                style="color: #00b4d8; font-size: 13px; text-decoration: none;">Mot de passe
+                                oubli&eacute; ?</a>
+                        </div>
+                        <div id="captchaZone"
+                            style="margin:16px 0; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px;">
+                            <div
+                                style="font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:12px; text-align:center;">
+                                <i class="bi bi-shield-check"></i> V&eacute;rification de s&eacute;curit&eacute; &mdash;
+                                pas de CAPTCHA illisible !
+                            </div>
+                            <div id="puzzleContainer"></div>
+                            <div id="captchaStatus"
+                                style="text-align:center; font-size:12px; margin-top:10px; display:none;"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                            Connexion
+                        </button>
+                    </div>
+
+                    <!-- TAB : Face ID -->
+                    <div id="panel-faceid" style="display:none; text-align:center; padding:20px 0;">
+                        <div style="position:relative; width:200px; height:200px; margin:0 auto 20px;">
+                            <video id="loginVideo" autoplay muted playsinline
+                                style="width:200px; height:200px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,0.1);"></video>
+                            <canvas id="loginCanvas" width="200" height="200" style="display:none;"></canvas>
+                            <div id="faceRing"
+                                style="position:absolute; inset:0; border-radius:50%; border:3px solid var(--accent); animation:faceRingSpin 2s linear infinite;">
+                            </div>
+                        </div>
+                        <div id="faceStatus" style="font-size:12px; color:rgba(255,255,255,0.5); margin-top:8px;">
+                            Positionnez votre visage dans le cercle</div>
+                        <button type="button" onclick="showLoginTab('password')"
+                            style="margin-top:20px; background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.5); border-radius:8px; padding:8px 20px; font-size:12px; cursor:pointer;">
+                            &#8592; Utiliser le mot de passe
+                        </button>
+                    </div>
+
+                    <!-- TAB : Code OTP Rapide -->
+                    <div id="panel-otp" style="display:none;">
+                        <div
+                            style="font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:16px; text-align:center;">
+                            Entrez votre email &mdash; nous vous envoyons un code instantan&eacute;.</div>
+                        <input type="email" id="otpEmail" placeholder="Votre email"
+                            style="width:100%; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:12px 16px; color:#fff; font-size:14px; margin-bottom:12px; box-sizing:border-box;">
+                        <button type="button" onclick="sendQuickOTP()"
+                            style="width:100%; background:var(--accent); color:#fff; border:none; border-radius:10px; padding:14px; font-weight:700; cursor:pointer; font-size:14px;">Envoyer
+                            le code &#8594;</button>
+                        <div id="otpFeedback"
+                            style="text-align:center; font-size:12px; margin-top:12px; color:rgba(255,255,255,0.5);">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- OVERLAY -->
+            <div class="overlay-container">
+                <div class="overlay">
+                    <div class="overlay-panel overlay-left">
+                        <h1>Bon retour !</h1>
+                        <p>Pour rester connect&eacute;, veuillez vous identifier avec vos informations personnelles</p>
+                        <button class="btn-ghost" id="signIn">Se connecter</button>
+                    </div>
+                    <div class="overlay-panel overlay-right">
+                        <div id="ptx-typewriter"></div>
+                        <h1>Nouveau ici ?</h1>
+                        <p style="margin-bottom: 15px;">Cr&eacute;ez un compte et commencez votre aventure avec Protex
+                        </p>
+
+                        <ul id="ptx-avantages">
+                            <li class="ptx-avantage-item">
+                                <div class="ptx-icon-circle">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF6B1A"
+                                        stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                        <path d="M9 12l2 2 4-4"></path>
+                                    </svg>
+                                </div>
+                                <span>Donn&eacute;es 100% s&eacute;curis&eacute;es</span>
+                            </li>
+                            <li class="ptx-avantage-item">
+                                <div class="ptx-icon-circle">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF6B1A"
+                                        stroke-width="2">
+                                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                                    </svg>
+                                </div>
+                                <span>Souscription en 2 minutes</span>
+                            </li>
+                            <li class="ptx-avantage-item">
+                                <div class="ptx-icon-circle">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF6B1A"
+                                        stroke-width="2">
+                                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                        <path
+                                            d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <span>Support 24h/7j disponible</span>
+                            </li>
+                            <li class="ptx-avantage-item">
+                                <div class="ptx-icon-circle">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF6B1A"
+                                        stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <path d="M14 2v6h6"></path>
+                                        <path d="M16 13H8"></path>
+                                        <path d="M16 17H8"></path>
+                                        <path d="M10 9H8"></path>
+                                    </svg>
+                                </div>
+                                <span>Contrats sans paperasse</span>
+                            </li>
+                        </ul>
+
+                        <div id="ptx-stats">
+                            <div class="ptx-stat-item">
+                                <span class="ptx-stat-val" data-target="12000">0</span>
+                                <span class="ptx-stat-lbl">Clients assur&eacute;s</span>
+                            </div>
+                            <div class="ptx-stat-item">
+                                <span class="ptx-stat-val" data-target="98">0</span>
+                                <span class="ptx-stat-lbl">Satisfaction</span>
+                            </div>
+                            <div class="ptx-stat-item">
+                                <span class="ptx-stat-val">24/7</span>
+                                <span class="ptx-stat-lbl">Disponibilit&eacute;</span>
+                            </div>
+                        </div>
+                        <div class="social-login">
+                            <a href="github_auth.php" class="social-btn" title="Sign up with GitHub"
+                                style="text-decoration:none; display:flex; align-items:center; justify-content:center;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
+                                    style="margin-right:10px;">
+                                    <path
+                                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.416-4.041-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                </svg>
+                                GitHub
+                            </a>
+                        </div>
+                        <button class="btn-ghost" id="signUp">S'inscrire</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div class="forgot-modal" id="forgotModal">
+        <div class="forgot-card">
+            <button class="close-modal-btn" id="closeForgotBtn">&times;</button>
+
+            <!-- Step 1: Email -->
+            <div class="step-container active" id="step1">
+                <div class="forgot-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                <h2 class="auth-title" style="font-size: 22px;">Mot de passe oubli&eacute;</h2>
+                <p class="auth-subtitle" style="margin-bottom:20px;">Saisissez votre email pour recevoir un code de
+                    r&eacute;initialisation.</p>
+                <input type="email" id="forgotEmail" class="form-input" placeholder="Votre adresse email"
+                    style="margin-bottom:20px;">
+                <button class="btn btn-primary" id="sendOtpBtn" style="width: 100%; justify-content: center;">Envoyer le
+                    code</button>
+            </div>
+
+            <!-- Step 2: Check email (magic link sent) -->
+            <div class="step-container" id="step2">
+                <div class="forgot-icon" style="color:#22c55e;">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="M22 7l-10 7L2 7"/>
+                    </svg>
+                </div>
+                <h2 class="auth-title" style="font-size: 22px; color:#22c55e;">Email envoy&eacute; !</h2>
+                <p class="auth-subtitle" style="margin-bottom:12px;">Un lien magique vous a &eacute;t&eacute; envoy&eacute; par email.</p>
+                <p class="auth-subtitle" style="margin-bottom:20px; font-size:13px;">Cliquez sur le lien dans l'email pour vous connecter automatiquement, puis changez votre mot de passe dans votre profil.</p>
+                <div style="background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); border-radius:12px; padding:12px; margin-bottom:20px; font-size:12px; color:rgba(255,255,255,0.6);">
+                    <strong>Vous ne trouvez pas l'email ?</strong> V&eacute;rifiez vos spams ou r&eacute;essayez.
+                </div>
+                <button class="btn btn-primary" onclick="document.getElementById('closeForgotBtn').click()" style="width:100%; justify-content:center;">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FACE ID MODAL -->
+    <div class="face-id-modal" id="faceIdModal">
+        <div class="face-id-card">
+            <button class="close-modal-btn" id="closeFaceIdBtn" title="Annuler">&times;</button>
+            <div class="scanner-container">
+                <video id="loginVideo" autoplay playsinline></video>
+                <div class="scanner-line"></div>
+            </div>
+            <div class="auth-title" style="font-size: 18px;">Reconnaissance IA</div>
+            <p class="auth-subtitle" id="loginFaceStatus" style="margin-bottom:0;">Initialisation...</p>
+        </div>
+    </div>
+
+    <script src="user/js/validation.js"></script>
+    <script>
+        // Double Slide Logic
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const authContainer = document.getElementById('authContainer');
+
+        signUpButton.addEventListener('click', () => {
+            authContainer.classList.add('right-panel-active');
+        });
+
+        signInButton.addEventListener('click', () => {
+            authContainer.classList.remove('right-panel-active');
+        });
+
+        // Theme Toggle (from templatemo-glass-admin-script.js logic)
+        const themeToggle = document.getElementById('theme-toggle');
+        const iconSun = document.querySelector('.icon-sun');
+        const iconMoon = document.querySelector('.icon-moon');
+        const body = document.body;
+
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            iconSun.style.display = 'none';
+            iconMoon.style.display = 'block';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                iconSun.style.display = 'none';
+                iconMoon.style.display = 'block';
+            } else {
+                localStorage.setItem('theme', 'light');
+                iconSun.style.display = 'block';
+                iconMoon.style.display = 'none';
+            }
+        });
+
+        // ==========================================
+        // LOGIN FORM SUBMIT
+        // ==========================================
+        document.getElementById("loginform").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            if (typeof validateForm === 'function') {
+                if (!validateForm(document.getElementById("loginform"))) return;
+            }
+
+            if (!captchaVerified) {
+                alert('&#9888;&#65039; Veuillez compl&eacute;ter la v&eacute;rification de s&eacute;curit&eacute;');
+                return;
+            }
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            fetch("login.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.otp_required) {
+                        window.location.href = "otp.html";
+                    } else if (data.success) {
+                        const backOfficeRoles = ["superadmin", "admin", "agent"];
+                        window.location.href = backOfficeRoles.includes(data.role) ? "../BackOffice/dashboard.php" : "client.php";
+                    } else {
+                        alert(data.message || "Identifiants incorrects");
+                    }
+                })
+                .catch(err => alert("Erreur de connexion"));
+        });
+
+        // ==========================================
+        // REGISTER FORM SUBMIT
+        // ==========================================
+        const registerForm = document.getElementById('registerForm');
+        let isSubmitting = false; // Prevent double-submit
+        registerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (isSubmitting) return;
+
+            if (typeof validateForm === 'function') {
+                if (!validateForm(registerForm)) {
+                    const firstErr = registerForm.querySelector('.input-error');
+                    if (firstErr) {
+                        firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return;
+                }
+            }
+
+            const submitBtn = registerForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            isSubmitting = true;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Inscription...';
+
+            const formData = new FormData(registerForm);
+            if (formData.get('password') !== formData.get('confirm_password')) {
+                alert("Les mots de passe ne correspondent pas");
+                isSubmitting = false;
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                return;
+            }
+            try {
+                const res = await fetch('registre.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = data.otp_required ? 'otp.html' : 'client.php';
+                } else {
+                    alert(data.message || 'Erreur lors de l\'inscription');
+                    isSubmitting = false;
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            } catch (err) {
+                alert('Erreur de connexion r&eacute;seau');
+                isSubmitting = false;
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+
+        loadAgences();
+
+        async function loadAgences() {
+            const select = document.getElementById('agenceSelect');
+            if (!select) return;
+            const errorDiv = document.getElementById('agenceError');
+            try {
+                const res = await fetch('get_agences_public.php');
+                const data = await res.json();
+                if (data.success && Array.isArray(data.data)) {
+                    select.innerHTML = '<option value="">-- Sélectionner une agence --</option>';
+                    data.data.forEach(agence => {
+                        const option = document.createElement('option');
+                        option.value = agence.id_agence;
+                        option.textContent = agence.nom_agence;
+                        select.appendChild(option);
+                    });
+                    if (errorDiv) errorDiv.style.display = 'none';
+                } else if (errorDiv) {
+                    errorDiv.textContent = 'Aucune agence disponible';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                if (errorDiv) {
+                    errorDiv.textContent = 'Erreur lors du chargement des agences';
+                    errorDiv.style.display = 'block';
+                }
+            }
+        }
+
+        // ==========================================
+        // FORGOT PASSWORD LOGIC
+        // ==========================================
+        const forgotModal = document.getElementById('forgotModal');
+        const openForgotBtn = document.getElementById('openForgotModal');
+        const closeForgotBtn = document.getElementById('closeForgotBtn');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        let currentResetEmail = '';
+
+        openForgotBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            step1.classList.add('active');
+            step2.classList.remove('active');
+            document.getElementById('forgotEmail').value = document.getElementById('email').value || '';
+            forgotModal.style.display = 'flex';
+            setTimeout(() => { forgotModal.classList.add('show'); }, 10);
+        });
+
+        closeForgotBtn.addEventListener('click', () => {
+            forgotModal.classList.remove('show');
+            setTimeout(() => { forgotModal.style.display = 'none'; }, 300);
+        });
+
+        // Send magic link
+        document.getElementById('sendOtpBtn').addEventListener('click', function () {
+            const email = document.getElementById('forgotEmail').value;
+            if (!email) { alert("Veuillez saisir votre email"); return; }
+
+            const btn = this;
+            const originalText = btn.textContent;
+            btn.textContent = "Envoi...";
+            btn.disabled = true;
+
+            fetch('forgot_password.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    if (data.success) {
+                        currentResetEmail = email;
+                        step1.classList.remove('active');
+                        step2.classList.add('active');
+                    } else {
+                        alert(data.message || "Erreur lors de l'envoi");
+                    }
+                })
+                .catch(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    alert("Erreur r&eacute;seau");
+                });
+        });
+
+        // ==========================================
+        // CAPTCHA LOGIC
+        // ==========================================
+        let captchaVerified = false;
+        let currentPuzzleToken = null;
+        let currentPuzzleType = null;
+
+        async function loadPuzzle() {
+            const types = ['slider', 'intrus', 'rotation'];
+            currentPuzzleType = types[Math.floor(Math.random() * types.length)];
+
+            try {
+                const res = await fetch(`http://localhost:5006/puzzle/${currentPuzzleType}`);
+                const data = await res.json();
+                currentPuzzleToken = data.token;
+
+                const container = document.getElementById('puzzleContainer');
+
+                if (currentPuzzleType === 'slider') {
+                    // S'assurer que les données existent avant de générer le HTML
+                    const imgBg = data.image_bg || "";
+                    const imgPiece = data.piece || "";
+
+                    container.innerHTML = `
+                        <div style="position:relative; display:inline-block; background:rgba(0,0,0,0.1); width:300px; height:150px; border-radius:10px; overflow:hidden;">
+                            ${imgBg ? `<img src="data:image/png;base64,${imgBg}" style="width:300px; height:150px; display:block;">` : '<div style="background:#333; height:150px;"></div>'}
+                            <div id="sliderPiece" style="position:absolute; top:${data.y || 50}px; left:0; cursor:grab; z-index:10;">
+                                ${imgPiece ? `<img src="data:image/png;base64,${imgPiece}" style="border:2px solid #00b4d8; border-radius:6px; height:40px; width:40px;">` : ''}
+                            </div>
+                        </div>
+                        <input type="range" id="sliderControl" min="0" max="260" value="0" style="width:300px; margin-top:10px; accent-color:#00b4d8;">
+                        <button type="button" onclick="verifyCaptcha()" style="margin-top:8px; background:#00b4d8; color:#fff; border:none; border-radius:8px; padding:8px 20px; cursor:pointer; width:100%;">Valider ✓</button>`;
+
+                    document.getElementById('sliderControl').addEventListener('input', function () {
+                        const piece = document.getElementById('sliderPiece');
+                        if (piece) piece.style.left = this.value + 'px';
+                    });
+                    window._captchaCorrectX = data.correct_x;
+                }
+
+                if (currentPuzzleType === 'intrus') {
+                    const grid = (data.images || []).map((img, i) =>
+                        `<img src="data:image/png;base64,${img}" onclick="selectIntrus(${i}, this)" 
+                        style="width:88px; border-radius:8px; cursor:pointer; border:2px solid transparent; transition:0.2s;" onerror="this.style.display='none'">`
+                    ).join('');
+                    container.innerHTML = `
+                        <div style="font-size:13px; color:rgba(255,255,255,0.7); margin-bottom:10px; text-align:center;">&#128269; Cliquez sur l'image diff&eacute;rente</div>
+                        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; justify-content:center;">${grid}</div>`;
+                    window._captchaSelected = null;
+                }
+
+                if (currentPuzzleType === 'rotation') {
+                    const imgRot = data.image || "";
+                    container.innerHTML = `
+                        <div style="text-align:center;">
+                            <div style="font-size:13px; color:rgba(255,255,255,0.7); margin-bottom:10px;">&#128256; Remettez l'image dans le bon sens</div>
+                            ${imgRot ? `<img id="rotImg" src="data:image/png;base64,${imgRot}" style="width:120px; border-radius:10px; transition:transform 0.1s;">` : '<div style="height:120px; background:#333; display:flex; align-items:center; justify-content:center;">Image non disponible</div>'}
+                            <input type="range" id="rotControl" min="0" max="359" value="0" style="width:100%; margin-top:12px; accent-color:#00b4d8;">
+                            <button type="button" onclick="verifyCaptcha()" style="margin-top:8px; background:#00b4d8; color:#fff; border:none; border-radius:8px; padding:8px 20px; cursor:pointer; width:100%;">Valider ✓</button>
+                        </div>`;
+                    document.getElementById('rotControl').addEventListener('input', function () {
+                        const img = document.getElementById('rotImg');
+                        if (img) img.style.transform = `rotate(${this.value}deg)`;
+                    });
+                    window._captchaCorrectAngle = data.correct_angle;
+                }
+            } catch (e) {
+                document.getElementById('puzzleContainer').innerHTML = "<div style='color:#2ed573; text-align:center; padding:16px; font-size:15px;'>&#9989; V&eacute;rification automatique activ&eacute;e</div>";
+                captchaVerified = true;
+            }
+        }
+
+        window.selectIntrus = function (index, el) {
+            document.querySelectorAll('#puzzleContainer img').forEach(i => i.style.borderColor = 'transparent');
+            el.style.borderColor = '#00b4d8';
+            window._captchaSelected = index;
+            verifyCaptcha();
+        };
+
+        async function verifyCaptcha() {
+            let body = { token: currentPuzzleToken };
+            if (currentPuzzleType === 'slider') body.x = parseInt(document.getElementById('sliderControl').value);
+            if (currentPuzzleType === 'intrus') { if (window._captchaSelected === null) return; body.index = window._captchaSelected; }
+            if (currentPuzzleType === 'rotation') body.angle = parseInt(document.getElementById('rotControl').value);
+
+            // Corriger l'URL si on utilise 'slider' car puzzle_engine.py attend /puzzle/verify
+            // alors que loadPuzzle utilise /puzzle/slider, /puzzle/intrus, etc.
+            let endpoint = currentPuzzleType === 'slider' ? 'verify' : currentPuzzleType === 'intrus' ? 'verify_intrus' : 'verify_rotation';
+
+            try {
+                const res = await fetch(`http://localhost:5006/puzzle/${endpoint}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                const status = document.getElementById('captchaStatus');
+                status.style.display = 'block';
+                if (data.success) {
+                    captchaVerified = true;
+                    document.getElementById('puzzleContainer').innerHTML = '<div style="text-align:center; color:#2ed573; font-size:20px; padding:10px;">&#9989; V&eacute;rification r&eacute;ussie !</div>';
+                    status.style.color = '#2ed573';
+                    status.textContent = 'Vous &ecirc;tes humain !';
+                } else {
+                    status.style.color = '#ff4757';
+                    status.textContent = '&#10060; Incorrect &mdash; Nouveau puzzle charg&eacute;';
+                    setTimeout(loadPuzzle, 1000);
+                }
+            } catch (err) {
+                console.error("Erreur verification captcha", err);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadPuzzle();
+        });
+
+        // ==========================================
+        // OCR LOGIC
+        // ==========================================
+        function handleCINDrop(event) {
+            event.preventDefault();
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) processCINFile(file);
+        }
+
+        async function processCINFile(file) {
+            if (file.size > 5 * 1024 * 1024) { alert('Image trop lourde (max 5MB)'); return; }
+
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                const base64 = e.target.result.split(',')[1];
+
+                document.getElementById('cinPreviewImg').src = e.target.result;
+                document.getElementById('cinPreview').style.display = 'block';
+                document.getElementById('cinProcessing').style.display = 'block';
+                document.getElementById('cinUploadZone').style.display = 'none';
+
+                goToStep(2); // Move to Step 2 after CIN
+
+                setTimeout(() => { document.getElementById('ocrProgress').style.width = '70%'; }, 100);
+
+                try {
+                    const res = await fetch('http://localhost:5007/extract_document', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image: base64 })
+                    });
+                    const data = await res.json();
+
+                    document.getElementById('ocrProgress').style.width = '100%';
+                    document.getElementById('cinProcessing').style.display = 'none';
+
+                    if (data.success) {
+                        fillOcrField('input[name="nom"]', data.data.nom);
+                        fillOcrField('input[name="prenom"]', data.data.prenom);
+                        fillOcrField('input[name="date_naissance"]', normalizeOcrDate(data.data.date_naissance));
+                        fillOcrField('input[name="cin"]', data.data.cin_number);
+                        fillOcrField('input[name="email"]', data.data.email);
+                        fillOcrField('input[name="telephone"]', data.data.telephone);
+                        fillOcrField('input[name="adresse"]', data.data.adresse);
+
+                        const confiance = Math.round(data.data.confiance * 100);
+                        document.getElementById('cinResult').style.display = 'block';
+                        document.getElementById('cinResult').innerHTML = `
+                            <div style="background:rgba(46,213,115,0.1); border:1px solid rgba(46,213,115,0.3); border-radius:10px; padding:12px; margin-top:10px;">
+                                <div style="color:#2ed573; font-weight:700; margin-bottom:6px;">&#9989; Document analys&eacute; &mdash; Confiance : ${confiance}%</div>
+                                <div style="font-size:12px; color:rgba(255,255,255,0.6);">Nom: ${data.data.nom || '&mdash;'} | Pr&eacute;nom: ${data.data.prenom || '&mdash;'} | N&eacute;(e): ${data.data.date_naissance || '&mdash;'}</div>
+                                <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-top:4px;">Email: ${data.data.email || '&mdash;'} | T&eacute;l: ${data.data.telephone || '&mdash;'} | Adresse: ${data.data.adresse || '&mdash;'}</div>
+                            </div>`;
+                    } else {
+                        document.getElementById('cinResult').style.display = 'block';
+                        document.getElementById('cinResult').innerHTML = `
+                            <div style="background:rgba(255,71,87,0.1); border:1px solid rgba(255,71,87,0.3); border-radius:10px; padding:12px; margin-top:10px; color:#ff4757;">
+                                &#10060; ${data.message || 'Document illisible'}
+                                <button type="button" onclick="resetCINUpload()" style="display:block; margin-top:8px; background:none; border:1px solid #ff4757; color:#ff4757; border-radius:6px; padding:4px 12px; cursor:pointer;">R&eacute;essayer</button>
+                            </div>`;
+                    }
+                } catch (e) {
+                    alert('&#10060; Service OCR non disponible (port 5007)');
+                    document.getElementById('cinProcessing').style.display = 'none';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function normalizeOcrDate(value) {
+            if (!value) return '';
+            const text = String(value).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+            const match = text.match(/^(\d{2})[\/\.](\d{2})[\/\.](\d{4})$/);
+            if (match) return `${match[3]}-${match[2]}-${match[1]}`;
+            return text;
+        }
+
+        function fillOcrField(selector, value) {
+            if (!value) return;
+            const field = document.querySelector(selector);
+            if (!field) return;
+            field.value = value;
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        function resetCINUpload() {
+            document.getElementById('cinPreview').style.display = 'none';
+            document.getElementById('cinUploadZone').style.display = 'block';
+            document.getElementById('cinResult').style.display = 'none';
+            document.getElementById('ocrProgress').style.width = '0%';
+            goToStep(1);
+        }
+
+        // ==========================================
+        // REGISTRATION VALIDATION LOGIC
+        // ==========================================
+
+        function goToStep(n) {
+            document.querySelectorAll('.step-item').forEach((el, i) => {
+                const circle = el.querySelector('.step-circle');
+                if (i < n - 1) {
+                    circle.style.background = '#2ed573';
+                    circle.innerHTML = '✓';
+                    el.querySelector('div:last-child').style.color = '#2ed573';
+                } else if (i === n - 1) {
+                    circle.style.background = 'var(--accent)';
+                    circle.innerHTML = (i + 1).toString();
+                    el.querySelector('div:last-child').style.color = 'var(--accent)';
+                } else {
+                    circle.style.background = 'rgba(255,255,255,0.1)';
+                    circle.style.color = 'rgba(255,255,255,0.4)';
+                    el.querySelector('div:last-child').style.color = 'rgba(255,255,255,0.4)';
+                }
+            });
+        }
+
+        document.getElementById('reg-email').addEventListener('blur', async function () {
+            const email = this.value.trim();
+            const feedback = document.getElementById('emailFeedback');
+            if (!email) return;
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                feedback.innerHTML = '&#10060; Format email invalide';
+                feedback.style.color = '#ff4757';
+                return;
+            }
+
+            feedback.innerHTML = '&#128269; V&eacute;rification...';
+            feedback.style.color = 'rgba(255,255,255,0.5)';
+
+            const res = await fetch(`check_email.php?email=${encodeURIComponent(email)}`);
+            const data = await res.json();
+            if (data.available) {
+                feedback.innerHTML = '&#9989; Email disponible';
+                feedback.style.color = '#2ed573';
+            } else {
+                feedback.innerHTML = '&#10060; Cet email est d&eacute;j&agrave; utilis&eacute;';
+                feedback.style.color = '#ff4757';
+            }
+        });
+
+        document.getElementById('reg-password').addEventListener('input', function () {
+            const pwd = this.value;
+            const zone = document.getElementById('passwordStrength');
+            const bar = document.getElementById('strengthBar');
+            const label = document.getElementById('strengthLabel');
+            const tips = document.getElementById('strengthTips');
+
+            if (!pwd) { zone.style.display = 'none'; return; }
+            zone.style.display = 'block';
+
+            let score = 0;
+            const checks = [];
+            if (pwd.length >= 8) score++; else checks.push('8 caract&egrave;res minimum');
+            if (/[A-Z]/.test(pwd)) score++; else checks.push('une majuscule');
+            if (/[0-9]/.test(pwd)) score++; else checks.push('un chiffre');
+            if (/[^A-Za-z0-9]/.test(pwd)) score++; else checks.push('un caract&egrave;re sp&eacute;cial');
+            if (pwd.length >= 12) score++;
+
+            const levels = [
+                { color: '#ff4757', label: '&#128308; Tr&egrave;s faible', pct: '20%' },
+                { color: '#ff6b35', label: '&#128992; Faible', pct: '40%' },
+                { color: '#ffa502', label: '&#128993; Moyen', pct: '60%' },
+                { color: '#2ed573', label: '&#128994; Fort', pct: '80%' },
+                { color: '#00b4d8', label: '&#128142; Excellent', pct: '100%' }
+            ];
+            const lvl = levels[Math.min(score, 4)];
+            bar.style.width = lvl.pct;
+            bar.style.background = lvl.color;
+            label.innerHTML = lvl.label;
+            label.style.color = lvl.color;
+            tips.innerHTML = checks.length > 0 ? 'Manque : ' + checks.join(', ') : '&#10003; Mot de passe solide';
+        });
+
+        document.getElementById('reg-telephone').addEventListener('input', function () {
+            let val = this.value.replace(/\D/g, '');
+            if (val.startsWith('216')) val = val.slice(3);
+            if (val.length > 8) val = val.slice(0, 8);
+            if (val.length >= 2) val = val.slice(0, 2) + ' ' + val.slice(2);
+            if (val.length >= 5) val = val.slice(0, 5) + ' ' + val.slice(5);
+            this.value = val;
+            document.getElementById('phoneFeedback').innerHTML = val.replace(/\s/g, '').length === 8 ? '&#9989; +216 ' + val : '';
+        });
+
+        document.getElementById('reg-referralCode').addEventListener('blur', async function () {
+            const code = this.value.trim().toUpperCase();
+            this.value = code;
+            if (!code) {
+                document.getElementById('referralFeedback').innerHTML = '';
+                document.getElementById('referralMsg').innerHTML = '';
+                return;
+            }
+            const res = await fetch(`check_referral.php?code=${encodeURIComponent(code)}`);
+            const data = await res.json();
+            const icon = document.getElementById('referralFeedback');
+            const msg = document.getElementById('referralMsg');
+            if (data.valid) {
+                icon.innerHTML = '&#9989;';
+                msg.innerHTML = `<span style="color:#2ed573;">Code valide &mdash; parrain : ${data.parrain}</span>`;
+            } else {
+                icon.innerHTML = '&#10060;';
+                msg.innerHTML = '<span style="color:#ff4757;">Code parrain invalide</span>';
+            }
+        });
+        // Ensure referral code is normalized on form submit as well
+        const regForm = document.getElementById('registerForm');
+        if (regForm) {
+            regForm.addEventListener('submit', function () {
+                const refEl = document.getElementById('reg-referralCode');
+                if (refEl && refEl.value) refEl.value = refEl.value.trim().toUpperCase();
+            });
+        }
+    </script>
+    <script>
+        // ==========================================
+        // LOGIN TABS + FACE ID + QUICK OTP LOGIC
+        // ==========================================
+        function showLoginTab(tab) {
+            ['password', 'faceid', 'otp'].forEach(t => {
+                document.getElementById(`panel-${t}`).style.display = 'none';
+                const btn = document.getElementById(`tab-${t}`);
+                btn.style.background = 'transparent';
+                btn.style.color = 'rgba(255,255,255,0.5)';
+            });
+            document.getElementById(`panel-${tab}`).style.display = 'block';
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.style.background = 'var(--accent)';
+            activeBtn.style.color = '#fff';
+            if (tab === 'faceid') startFaceIDLogin();
+            else stopFaceStream();
+        }
+
+        let faceStream = null;
+        function stopFaceStream() {
+            if (faceStream) { faceStream.getTracks().forEach(t => t.stop()); faceStream = null; }
+        }
+
+        async function startFaceIDLogin() {
+            const video = document.getElementById('loginVideo');
+            const ring = document.getElementById('faceRing');
+            const status = document.getElementById('faceStatus');
+            stopFaceStream();
+            try {
+                faceStream = await navigator.mediaDevices.getUserMedia({ video: { width: 200, height: 200 } });
+                video.srcObject = faceStream;
+                let attempts = 0;
+                const interval = setInterval(async () => {
+                    if (!faceStream || attempts >= 10) {
+                        clearInterval(interval);
+                        status.textContent = '&#10060; Non reconnu &mdash; utilisez votre mot de passe';
+                        status.style.color = '#ff4757';
+                        ring.style.borderColor = '#ff4757';
+                        stopFaceStream();
+                        return;
+                    }
+                    const canvas = document.getElementById('loginCanvas');
+                    canvas.width = 200; canvas.height = 200;
+                    canvas.getContext('2d').drawImage(video, 0, 0, 200, 200);
+                    const frame = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+                    try {
+                        const res = await fetch('login_face.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ image: frame })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            clearInterval(interval);
+                            ring.style.borderColor = '#2ed573';
+                            ring.style.animation = 'none';
+                            status.innerHTML = '&#9989; Reconnu &mdash; connexion...';
+                            status.style.color = '#2ed573';
+                            stopFaceStream();
+                            setTimeout(() => {
+                                const backOfficeRoles = ['superadmin', 'admin', 'agent'];
+                                if (backOfficeRoles.includes(data.role)) {
+                                    location.href = '../BackOffice/dashboard.php';
+                                } else {
+                                    location.href = 'client.php';
+                                }
+                            }, 1000);
+                        } else {
+                            attempts++;
+                            let msg = "Analyse...";
+                            if (data.message && data.message.includes("No face")) {
+                                msg = "Visage non détecté...";
+                            } else if (data.confidence) {
+                                msg = `Non reconnu (${Math.round(data.confidence)})`;
+                            }
+                            status.textContent = `${msg} (${attempts}/10)`;
+                        }
+                    } catch (e) {
+                        attempts++;
+                        status.textContent = `Moteur IA indisponible... (${attempts}/10)`;
+                    }
+                }, 1500);
+            } catch (e) {
+                status.innerHTML = '&#10060; Cam&eacute;ra non disponible';
+                status.style.color = '#ff4757';
+            }
+        }
+
+        async function sendQuickOTP() {
+            const email = document.getElementById('otpEmail').value.trim();
+            const feedback = document.getElementById('otpFeedback');
+            if (!email) return;
+            feedback.innerHTML = '&#128228; Envoi en cours...';
+            feedback.style.color = 'rgba(255,255,255,0.5)';
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', '__OTP_ONLY__');
+            try {
+                const res = await fetch('login.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.otp_required) {
+                    feedback.innerHTML = '&#9989; Code envoy&eacute; &agrave; ' + email;
+                    feedback.style.color = '#2ed573';
+                    setTimeout(() => location.href = 'otp.html', 1500);
+                } else {
+                    feedback.innerHTML = '&#10060; ' + (data.message || 'Email introuvable');
+                    feedback.style.color = '#ff4757';
+                }
+            } catch (e) {
+                feedback.innerHTML = '&#10060; Erreur r&eacute;seau';
+                feedback.style.color = '#ff4757';
+            }
+        }
+    </script>
+    <script>
+        (function () {
+            const ptx_prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (ptx_prefersReducedMotion) return;
+
+            // === 1. PARTICLES ===
+            const ptx_canvas = document.createElement('canvas');
+            ptx_canvas.id = 'particles-canvas';
+            Object.assign(ptx_canvas.style, {
+                position: 'fixed', top: '0', left: '0', width: '100%', height: '100%',
+                zIndex: '0', pointerEvents: 'none'
+            });
+            document.body.prepend(ptx_canvas);
+
+            const ptx_ctx = ptx_canvas.getContext('2d');
+            let ptx_width, ptx_height;
+            const ptx_particles = [];
+            const ptx_colors = ['#FF6B1A', '#FF6B1A', '#1A3A7A', '#1A3A7A', '#FFFFFF'];
+
+            function ptx_resize() {
+                ptx_width = ptx_canvas.width = window.innerWidth;
+                ptx_height = ptx_canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', ptx_resize);
+            ptx_resize();
+
+            for (let i = 0; i < 80; i++) {
+                ptx_particles.push({
+                    x: Math.random() * ptx_width,
+                    y: Math.random() * ptx_height,
+                    r: Math.random() * 2 + 1,
+                    dx: (Math.random() - 0.5) * 1.2,
+                    dy: (Math.random() - 0.5) * 1.2,
+                    opacity: Math.random() * 0.5 + 0.2,
+                    color: ptx_colors[Math.floor(Math.random() * ptx_colors.length)]
+                });
+            }
+
+            function ptx_animateParticles() {
+                ptx_ctx.clearRect(0, 0, ptx_width, ptx_height);
+                ptx_particles.forEach(p => {
+                    p.x += p.dx;
+                    p.y += p.dy;
+                    if (p.x < 0 || p.x > ptx_width) p.dx *= -1;
+                    if (p.y < 0 || p.y > ptx_height) p.dy *= -1;
+
+                    ptx_ctx.beginPath();
+                    ptx_ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ptx_ctx.fillStyle = p.color;
+                    ptx_ctx.globalAlpha = p.opacity;
+                    ptx_ctx.fill();
+                });
+                ptx_ctx.globalAlpha = 1;
+                requestAnimationFrame(ptx_animateParticles);
+            }
+            ptx_animateParticles();
+
+            // === 2. WAVES ===
+            const ptx_wavesContainer = document.createElement('div');
+            ptx_wavesContainer.id = 'waves-container';
+
+            const ptx_waveSVG = `<svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"/><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05c24.3,18.3,53.02,26.12,81.87,30.13,32.43,4.52,65.8,4.3,98.6-2.58,35.4-7.44,69-21.05,102.6-32.53,42.4-14.47,86-26.6,131.2-31.5,41-4.4,82.8-4.4,124.5,1.2,43.3,5.8,85.6,17.2,126.8,32.6,33.5,12.5,67.6,23.3,103,26.5,35.5,3.2,71.5-1.1,105.7-11.4,32.2-9.7,62.8-24.5,91-44.5,11.5-8.2,22.4-17.1,32.6-26.7V0Z" opacity=".5"/><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"/></svg>`;
+
+            for (let i = 0; i < 3; i++) {
+                const w = document.createElement('div');
+                w.className = 'ptx_wave';
+                w.innerHTML = ptx_waveSVG;
+                ptx_wavesContainer.appendChild(w);
+            }
+            document.body.appendChild(ptx_wavesContainer);
+
+            // === 4. CUSTOM CURSOR ===
+            const ptx_dot = document.createElement('div');
+            ptx_dot.id = 'ptx_cursor_dot';
+            document.body.appendChild(ptx_dot);
+
+            const ptx_ring = document.createElement('div');
+            ptx_ring.id = 'ptx_cursor_ring';
+            document.body.appendChild(ptx_ring);
+
+            document.addEventListener('mousemove', e => {
+                ptx_dot.style.left = e.clientX + 'px';
+                ptx_dot.style.top = e.clientY + 'px';
+
+                ptx_ring.style.left = e.clientX + 'px';
+                ptx_ring.style.top = e.clientY + 'px';
+            });
+
+            const ptx_hoverElements = document.querySelectorAll('button, a, input');
+            ptx_hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    ptx_dot.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                    ptx_dot.style.background = '#1A3A7A';
+                    ptx_ring.style.transform = 'translate(-50%, -50%) scale(1.8)';
+                    ptx_ring.style.borderColor = '#1A3A7A';
+                });
+                el.addEventListener('mouseleave', () => {
+                    ptx_dot.style.transform = 'translate(-50%, -50%) scale(1)';
+                    ptx_dot.style.background = '#FF6B1A';
+                    ptx_ring.style.transform = 'translate(-50%, -50%) scale(1)';
+                    ptx_ring.style.borderColor = 'rgba(255,107,26,0.6)';
+                });
+            });
+
+            // === 1. TYPEWRITER ===
+            const ptx_slogans = [
+                "Votre assurance, simplifi&eacute;e.",
+                "Prot&eacute;gez ce qui compte.",
+                "Rapide. Fiable. Protex.",
+                "Toujours l&agrave; pour vous."
+            ];
+            const ptx_twEl = document.getElementById('ptx-typewriter');
+            let ptx_sloganIdx = 0;
+            let ptx_charIdx = 0;
+            let ptx_isDeleting = false;
+
+            function ptx_typewriter() {
+                if (!ptx_twEl) return;
+                const current = ptx_slogans[ptx_sloganIdx];
+
+                if (ptx_isDeleting) {
+                    ptx_twEl.textContent = current.substring(0, ptx_charIdx - 1);
+                    ptx_charIdx--;
+                } else {
+                    ptx_twEl.textContent = current.substring(0, ptx_charIdx + 1);
+                    ptx_charIdx++;
+                }
+
+                let ptx_speed = ptx_isDeleting ? 30 : 60;
+
+                if (!ptx_isDeleting && ptx_charIdx === current.length) {
+                    ptx_speed = 2000;
+                    ptx_isDeleting = true;
+                } else if (ptx_isDeleting && ptx_charIdx === 0) {
+                    ptx_isDeleting = false;
+                    ptx_sloganIdx = (ptx_sloganIdx + 1) % ptx_slogans.length;
+                    ptx_speed = 500;
+                }
+
+                setTimeout(ptx_typewriter, ptx_speed);
+            }
+            ptx_typewriter();
+
+            // === 3. STATS ANIMATION ===
+            const ptx_vals = document.querySelectorAll('.ptx-stat-val[data-target]');
+            let ptx_animated = false;
+
+            function ptx_animateValue(obj, start, end, duration) {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    let val = Math.floor(progress * (end - start) + start);
+
+                    if (end === 12000) obj.innerHTML = val.toLocaleString('fr-FR') + '+';
+                    else if (end === 98) obj.innerHTML = val + '%';
+                    else obj.innerHTML = val;
+
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    } else {
+                        if (end === 12000) obj.innerHTML = '12 000+';
+                        if (end === 98) obj.innerHTML = '98%';
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+
+            function ptx_triggerStats() {
+                if (ptx_animated) return;
+                ptx_animated = true;
+                ptx_vals.forEach(val => {
+                    const target = parseInt(val.getAttribute('data-target'));
+                    if (!isNaN(target)) {
+                        ptx_animateValue(val, 0, target, 1500);
+                    }
+                });
+            }
+
+            // Trigger stats animation if right overlay is visible (which is the default when page loads)
+            const ptx_authCont = document.getElementById('authContainer');
+            if (ptx_authCont && !ptx_authCont.classList.contains('right-panel-active')) {
+                setTimeout(ptx_triggerStats, 500);
+            }
+
+            // Re-trigger if user switches panels
+            const ptx_signInBtn = document.getElementById('signIn');
+            if (ptx_signInBtn) {
+                ptx_signInBtn.addEventListener('click', () => {
+                    // When we click 'signIn', the overlay moves to the right, showing "Nouveau ici ?" panel
+                    ptx_animated = false;
+                    setTimeout(ptx_triggerStats, 600);
+                });
+            }
+
+        })();
+    </script>
+    <!-- Cookie Banner -->
+    <div id="ptx-cookie-banner">
+        <div class="ptx-cookie-content">
+            <p>🍪 Protex utilise des cookies pour am&eacute;liorer votre exp&eacute;rience et s&eacute;curiser votre
+                connexion.</p>
+        </div>
+        <div class="ptx-cookie-actions">
+            <button id="ptx-cookie-refuse" class="ptx-cookie-btn-refuse">Refuser</button>
+            <button id="ptx-cookie-accept" class="ptx-cookie-btn-accept">Accepter</button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const ptx_banner = document.getElementById('ptx-cookie-banner');
+            const ptx_acceptBtn = document.getElementById('ptx-cookie-accept');
+            const ptx_refuseBtn = document.getElementById('ptx-cookie-refuse');
+
+            if (localStorage.getItem('ptx_cookies')) {
+                ptx_banner.style.display = 'none';
+            }
+
+            ptx_acceptBtn.onclick = () => {
+                localStorage.setItem('ptx_cookies', 'accepted');
+                ptx_banner.style.display = 'none';
+            };
+
+            ptx_refuseBtn.onclick = () => {
+                localStorage.setItem('ptx_cookies', 'refused');
+                ptx_banner.style.display = 'none';
+            };
+        })();
+    </script>
+</body>
+
+</html>

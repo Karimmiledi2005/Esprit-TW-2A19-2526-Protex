@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification - AssuranceConnect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f0f4ff; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .otp-card { background: white; border-radius: 16px; padding: 40px; max-width: 420px; width: 100%; box-shadow: 0 8px 32px rgba(37,99,235,0.10); }
+        .otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
+        .otp-inputs input { width: 48px; height: 56px; text-align: center; font-size: 24px; font-weight: bold; border: 2px solid #e5e7eb; border-radius: 10px; outline: none; transition: border-color .2s; }
+        .otp-inputs input:focus { border-color: #2563eb; }
+        .btn-verify { background: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .btn-verify:hover { background: #1d4ed8; }
+        #message { margin-top: 16px; text-align: center; font-size: 14px; }
+        .resend-link { color: #2563eb; cursor: pointer; text-decoration: underline; }
+    </style>
+</head>
+<body>
+<div class="otp-card">
+    <div class="text-center mb-3">
+        <img src="logo.png" height="48" alt="Logo">
+    </div>
+    <h4 class="text-center fw-bold mb-1">Vérification en 2 étapes</h4>
+    <p class="text-center text-muted" style="font-size:14px">
+        Un code à 6 chiffres a été envoyé à votre adresse email.<br>
+        <strong>Il expire dans 5 minutes.</strong>
+    </p>
+
+    <div class="otp-inputs">
+        <input type="text" maxlength="1" class="otp-digit">
+        <input type="text" maxlength="1" class="otp-digit">
+        <input type="text" maxlength="1" class="otp-digit">
+        <input type="text" maxlength="1" class="otp-digit">
+        <input type="text" maxlength="1" class="otp-digit">
+        <input type="text" maxlength="1" class="otp-digit">
+    </div>
+
+    <button class="btn-verify" onclick="verifyOTP()">Vérifier</button>
+    <div id="message"></div>
+
+    <p class="text-center mt-3" style="font-size:13px;color:#888">
+        Pas reçu ? <span class="resend-link" onclick="resend()">Renvoyer le code</span>
+    </p>
+</div>
+
+<script>
+    // Auto-focus suivant champ
+    const digits = document.querySelectorAll('.otp-digit');
+    digits.forEach((input, i) => {
+        input.addEventListener('input', () => {
+            if (input.value && i < digits.length - 1) digits[i + 1].focus();
+        });
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !input.value && i > 0) digits[i - 1].focus();
+        });
+    });
+
+    async function verifyOTP() {
+        const code = [...digits].map(d => d.value).join('');
+        if (code.length !== 6) {
+            showMessage('Entrez les 6 chiffres', 'red');
+            return;
+        }
+
+        const res  = await fetch('verify_otp.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showMessage('✅ Code correct, redirection...', 'green');
+            setTimeout(() => {
+                const backOfficeRoles = ['superadmin', 'admin', 'agent'];
+                window.location.href = backOfficeRoles.includes(data.role)
+                    ? '../BackOffice/admin.php'
+                    : 'client.php';
+            }, 1000);
+        } else {
+            showMessage('❌ ' + data.message, 'red');
+            digits.forEach(d => d.value = '');
+            digits[0].focus();
+        }
+    }
+
+    async function resend() {
+        showMessage('📨 Renvoi en cours...', 'blue');
+        const res  = await fetch('resend_otp.php', { method: 'POST' });
+        const data = await res.json();
+        showMessage(data.message, data.success ? 'green' : 'red');
+    }
+
+    function showMessage(msg, color) {
+        document.getElementById('message').innerHTML =
+            `<span style="color:${color}">${msg}</span>`;
+    }
+
+    digits[0].focus();
+</script>
+</body>
+</html>

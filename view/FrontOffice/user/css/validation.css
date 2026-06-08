@@ -1,0 +1,75 @@
+/* =============================================
+   validation.css — Styles contrôle de saisie
+   Protex — FrontOffice
+   ============================================= */
+
+/* ─── Champ valide ───────────────────────── */
+.form-input.input-valid,
+.form-control.input-valid {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+/* ─── Champ en erreur ────────────────────── */
+.form-input.input-error,
+.form-control.input-error {
+    border-color: #ff4444 !important;
+    box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.15);
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%       { transform: translateX(-2px); }
+    75%       { transform: translateX(2px); }
+}
+
+/* ─── Message d'erreur sous le champ ─────── */
+.field-error {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    color: #ef4444;
+    font-family: var(--font-body, 'Outfit', sans-serif);
+    animation: fadeIn 0.2s ease;
+}
+
+/* ─── Message d'aide sous le champ ─────── */
+.field-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: var(--font-body, 'Outfit', sans-serif);
+}
+
+/* ─── Style pour les hints dans les formulaires ─────── */
+.form-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: var(--font-body, 'Outfit', sans-serif);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Icône check/error inline ───────────── */
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper .input-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.input-wrapper .input-icon.valid  { color: #22c55e; }
+.input-wrapper .input-icon.error  { color: #ef4444; }

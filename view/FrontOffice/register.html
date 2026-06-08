@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Protex</title>
+    <meta name="description" content="3D Glassmorphism Dashboard Template">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="templatemo-glass-admin-style.css">
+    <link rel="stylesheet" href="user/css/validation.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <style>
+        /* ===== COOKIE BANNER ===== */
+        #ptx-cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 99999;
+            background: rgba(10, 15, 30, 0.97);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 107, 26, 0.3);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            transition: transform 0.4s ease;
+        }
+
+        .ptx-cookie-content p {
+            margin: 0;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .ptx-cookie-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .ptx-cookie-btn-refuse,
+        .ptx-cookie-btn-accept {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+        }
+
+        .ptx-cookie-btn-refuse {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: white;
+        }
+
+        .ptx-cookie-btn-refuse:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .ptx-cookie-btn-accept {
+            background: #FF6B1A;
+            color: white;
+            font-weight: 600;
+        }
+
+        .ptx-cookie-btn-accept:hover {
+            background: #ff8c00;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 600px) {
+            #ptx-cookie-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 16px;
+            }
+
+            .ptx-cookie-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="login-page">
+        <button class="theme-toggle-float" id="theme-toggle" title="Toggle Light/Dark Mode">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
+                <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+                <path d="M2 12h2"/><path d="M20 12h2"/>
+                <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+            </svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+        </button>
+
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="logo.png" alt="Protex Logo" width="50" height="50">
+                    <span class="logo-text">Protex</span>
+                    <h1 class="login-title">Create Account</h1>
+                    <p class="login-subtitle">Start your journey with Protex</p>
+                </div>
+
+                <form method="post" action="registre.php" id="registerForm">
+                    <div style="background:rgba(0,180,216,0.08); border:1px dashed rgba(0,180,216,0.3); border-radius:16px; padding:20px; margin-bottom:24px;">
+                        <div style="font-size:14px; font-weight:700; color:#00b4d8; margin-bottom:8px;">
+                            <i class="bi bi-card-image"></i> Remplissage automatique par IA
+                        </div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:16px;">
+                            Uploadez votre CIN ou passeport &mdash; l'IA remplit automatiquement le formulaire
+                        </div>
+                        
+                        <div id="cinUploadZone" style="border:2px dashed rgba(255,255,255,0.2); border-radius:12px; padding:30px; text-align:center; cursor:pointer; transition:0.3s;"
+                            onclick="document.getElementById('cinFileInput').click()"
+                            ondragover="event.preventDefault(); this.style.borderColor='#00b4d8'"
+                            ondrop="handleCINDrop(event)">
+                            <i class="bi bi-cloud-upload" style="font-size:32px; color:rgba(255,255,255,0.3);"></i>
+                            <div style="margin-top:8px; color:rgba(255,255,255,0.4); font-size:13px;">Glissez votre CIN ici ou cliquez</div>
+                            <div style="font-size:11px; color:rgba(255,255,255,0.2); margin-top:4px;">JPG, PNG &mdash; Max 5MB</div>
+                        </div>
+                        <input type="file" id="cinFileInput" accept="image/*" style="display:none" onchange="processCINFile(this.files[0])">
+                        
+                        <div id="cinPreview" style="display:none; margin-top:12px;">
+                            <img id="cinPreviewImg" style="width:100%; border-radius:10px; max-height:200px; object-fit:cover;">
+                            <div id="cinProcessing" style="text-align:center; margin-top:10px; display:none;">
+                                <div style="color:#00b4d8; font-size:13px;">&#128269; Analyse du document en cours...</div>
+                                <div style="width:100%; height:3px; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:8px; overflow:hidden;">
+                                    <div id="ocrProgress" style="height:100%; background:#00b4d8; width:0%; transition:width 2s; border-radius:2px;"></div>
+                                </div>
+                            </div>
+                            <div id="cinResult" style="display:none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nom</label>
+                        <input type="text" name="nom" class="form-input" placeholder="Nom" required data-rule="nom">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Pr&eacute;nom</label>
+                        <input type="text" name="prenom" class="form-input" placeholder="Pr&eacute;nom" required data-rule="prenom">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-input" placeholder="Email" required data-rule="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">T&eacute;l&eacute;phone</label>
+                        <input type="text" name="telephone" class="form-input" placeholder="T&eacute;l&eacute;phone" data-rule="telephone">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CIN</label>
+                        <input type="text" name="cin" class="form-input" placeholder="12345678" maxlength="8" data-rule="cin">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Adresse</label>
+                        <input type="text" name="adresse" class="form-input" placeholder="Adresse" data-rule="adresse">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Date de naissance</label>
+                        <input type="date" name="date_naissance" class="form-input" data-rule="date_naissance" max="">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Agence</label>
+                        <select name="id_agence" class="form-input" id="agenceSelect" required>
+                            <option value="">-- Sélectionner une agence --</option>
+                        </select>
+                        <div id="agenceLoadingError" style="color: #ff6b6b; font-size: 12px; margin-top: 6px; display: none;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Code de parrainage (optionnel)</label>
+                        <input type="text" name="referral_code" id="referralCode" class="form-input" placeholder="PRTX-XXXXXX" style="font-family:monospace;letter-spacing:1px">
+                        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px"><i class="bi bi-gift"></i> Vous avez été invité ? Saisissez le code de votre parrain</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" name="password" id="password" class="form-input" placeholder="Create a password" required data-rule="password">
+                            <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div id="password-strength" class="password-strength">
+                            <div class="strength-bar">
+                                <div id="strength-fill" class="strength-fill"></div>
+                            </div>
+                            <div id="strength-text" class="strength-text">Enter a password</div>
+                        </div>
+
+                        <div class="password-requirements">
+                            <ul id="password-checklist">
+                                <li id="minchar" class="req-item">Minimum 8 characters</li>
+                                <li id="upper" class="req-item">At least 1 uppercase letter (A-Z)</li>
+                                <li id="lower" class="req-item">At least 1 lowercase letter (a-z)</li>
+                                <li id="number" class="req-item">At least 1 number (0-9)</li>
+                                <li id="symbol" class="req-item">At least 1 special character (!@#$%^&*...)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirm-password">Confirm Password</label>
+                        <input type="password" name="confirm_password" id="confirm-password" class="form-input" placeholder="Confirm your password" required data-rule="password_confirm">
+                    </div>
+
+                    <div class="form-row" style="margin-bottom: 24px;">
+                        <label class="checkbox-label">
+                            <input type="checkbox">
+                            I agree to the <a href="#" style="color: var(--emerald-light);">Terms & Conditions</a>
+                        </label>
+                    </div>
+
+                    <div id="captchaZone" style="margin:16px 0; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px;">
+                        <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:12px; text-align:center;">
+                            <i class="bi bi-shield-check"></i> V&eacute;rification de s&eacute;curit&eacute; &mdash; pas de CAPTCHA illisible !
+                        </div>
+                        <div id="puzzleContainer"></div>
+                        <div id="captchaStatus" style="text-align:center; font-size:12px; margin-top:10px; display:none;"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Create Account
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>or sign up with</span>
+                </div>
+
+                <div class="social-login">
+                    <a href="github_auth.php" class="social-btn" title="Sign up with GitHub" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right:10px;">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.416-4.041-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        GitHub
+                    </a>
+                </div>
+
+                <p class="login-footer">
+                    Already have an account? <a href="login.html">Sign In</a>
+                </p>
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            <p>Copyright © 2026 Protex. Designed by TemplateMo</p>
+        </footer>
+    </div>
+
+    <script src="templatemo-glass-admin-script.js"></script>
+    <script src="user/js/validation.js"></script>
+    <script>
+        // Limiter la date de naissance &agrave; 18 ans dans le pass&eacute;
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('input[name="date_naissance"]');
+            if (dateInput) {
+                const today = new Date();
+                const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+                const minDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate());
+                dateInput.max = maxDate.toISOString().split('T')[0];
+                dateInput.min = minDate.toISOString().split('T')[0];
+            }
+
+            // Handle form submission with AJAX for OTP
+            const form = document.getElementById('registerForm');
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // 1. Validation des champs (standard via validation.js)
+                if (typeof validateForm === 'function') {
+                    if (!validateForm(form)) {
+                        // On ne s'arrête pas s'il y a des erreurs visuelles, mais on scrolle vers la première
+                        const firstErr = form.querySelector('.input-error');
+                        if (firstErr) {
+                            firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return;
+                        }
+                    }
+                }
+
+                // 2. Vérification Captcha
+                if (!captchaVerified) {
+                    alert('&#9888;&#65039; Veuillez compl&eacute;ter la v&eacute;rification de s&eacute;curit&eacute;');
+                    return;
+                }
+                const formData = new FormData(form);
+                try {
+                    const res = await fetch('registre.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        window.location.href = 'confirmation.html?type=register';
+                    } else {
+                        alert(data.message || 'Erreur lors de l\'inscription');
+                    }
+                } catch (err) {
+                    alert('Erreur de connexion');
+                }
+            });
+
+        });
+
+        // Charger les agences au démarrage
+        loadAgences();
+
+        async function loadAgences() {
+            const select = document.getElementById('agenceSelect');
+            if (!select) return;
+            const errorDiv = document.getElementById('agenceLoadingError');
+            try {
+                const res = await fetch('get_agences_public.php');
+                const data = await res.json();
+                console.log("Agences chargées:", data);
+                if (data.success && data.data && data.data.length > 0) {
+                    select.innerHTML = '<option value="">-- Sélectionner une agence --</option>';
+                    data.data.forEach(agence => {
+                        const option = document.createElement('option');
+                        option.value = agence.id_agence;
+                        option.textContent = agence.nom_agence;
+                        select.appendChild(option);
+                    });
+                } else {
+                    if (errorDiv) {
+                        errorDiv.textContent = 'Aucune agence disponible';
+                        errorDiv.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error("Erreur chargement agences:", err);
+                if (errorDiv) {
+                    errorDiv.textContent = 'Erreur lors du chargement des agences';
+                    errorDiv.style.display = 'block';
+                }
+            }
+        }
+
+        // OCR Logique
+        function handleCINDrop(event) {
+            event.preventDefault();
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) processCINFile(file);
+        }
+
+        async function processCINFile(file) {
+            if (file.size > 5 * 1024 * 1024) { alert('Image trop lourde (max 5MB)'); return; }
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64 = e.target.result.split(',')[1];
+                
+                document.getElementById('cinPreviewImg').src = e.target.result;
+                document.getElementById('cinPreview').style.display = 'block';
+                document.getElementById('cinProcessing').style.display = 'block';
+                document.getElementById('cinUploadZone').style.display = 'none';
+                
+                // Barre de progression anim&eacute;e
+                setTimeout(() => { document.getElementById('ocrProgress').style.width = '70%'; }, 100);
+                
+                try {
+                    const res = await fetch('http://localhost:5007/extract_document', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({image: base64})
+                    });
+                    const data = await res.json();
+                    
+                    document.getElementById('ocrProgress').style.width = '100%';
+                    document.getElementById('cinProcessing').style.display = 'none';
+                    
+                    if (data.success) {
+                        // Pr&eacute;-remplir les champs du formulaire
+                        fillOcrField('input[name="nom"]', data.data.nom);
+                        fillOcrField('input[name="prenom"]', data.data.prenom);
+                        fillOcrField('input[name="date_naissance"]', normalizeOcrDate(data.data.date_naissance));
+                        fillOcrField('input[name="cin"]', data.data.cin_number);
+                        fillOcrField('input[name="email"]', data.data.email);
+                        fillOcrField('input[name="telephone"]', data.data.telephone);
+                        fillOcrField('input[name="adresse"]', data.data.adresse);
+                        
+                        const confiance = Math.round(data.data.confiance * 100);
+                        document.getElementById('cinResult').style.display = 'block';
+                        document.getElementById('cinResult').innerHTML = `
+                            <div style="background:rgba(46,213,115,0.1); border:1px solid rgba(46,213,115,0.3); border-radius:10px; padding:12px; margin-top:10px;">
+                                <div style="color:#2ed573; font-weight:700; margin-bottom:6px;">&#9989; Document analys&eacute; &mdash; Confiance : ${confiance}%</div>
+                                <div style="font-size:12px; color:rgba(255,255,255,0.6);">Nom: ${data.data.nom || '&mdash;'} | Pr&eacute;nom: ${data.data.prenom || '&mdash;'} | N&eacute;(e): ${data.data.date_naissance || '&mdash;'}</div>
+                                <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-top:4px;">Email: ${data.data.email || '&mdash;'} | T&eacute;l: ${data.data.telephone || '&mdash;'} | Adresse: ${data.data.adresse || '&mdash;'}</div>
+                                <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:4px;">V&eacute;rifiez et corrigez les champs si n&eacute;cessaire</div>
+                            </div>`;
+                    } else {
+                        document.getElementById('cinResult').style.display = 'block';
+                        document.getElementById('cinResult').innerHTML = `
+                            <div style="background:rgba(255,71,87,0.1); border:1px solid rgba(255,71,87,0.3); border-radius:10px; padding:12px; margin-top:10px; color:#ff4757;">
+                                &#10060; ${data.message || 'Document illisible &mdash; veuillez reprendre la photo'}
+                                <button type="button" onclick="resetCINUpload()" style="display:block; margin-top:8px; background:none; border:1px solid #ff4757; color:#ff4757; border-radius:6px; padding:4px 12px; cursor:pointer;">R&eacute;essayer</button>
+                            </div>`;
+                    }
+                } catch(e) {
+                    alert('&#10060; Service OCR non disponible &mdash; v&eacute;rifiez que ocr_engine.py tourne sur port 5007');
+                    document.getElementById('cinProcessing').style.display = 'none';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function normalizeOcrDate(value) {
+            if (!value) return '';
+            const text = String(value).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+            const match = text.match(/^(\d{2})[\/\.](\d{2})[\/\.](\d{4})$/);
+            if (match) return `${match[3]}-${match[2]}-${match[1]}`;
+            return text;
+        }
+
+        function fillOcrField(selector, value) {
+            if (!value) return;
+            const field = document.querySelector(selector);
+            if (!field) return;
+            field.value = value;
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        function resetCINUpload() {
+            document.getElementById('cinPreview').style.display = 'none';
+            document.getElementById('cinUploadZone').style.display = 'block';
+            document.getElementById('cinResult').style.display = 'none';
+            document.getElementById('ocrProgress').style.width = '0%';
+        }
+
+        // ==========================================
+        // CAPTCHA LOGIC
+        // ==========================================
+        let captchaVerified = false;
+        let currentPuzzleToken = null;
+        let currentPuzzleType = null;
+
+        async function loadPuzzle() {
+            const types = ['slider', 'intrus', 'rotation'];
+            currentPuzzleType = types[Math.floor(Math.random() * types.length)];
+            
+            try {
+                const res = await fetch(`http://localhost:5006/puzzle/${currentPuzzleType}`);
+                const data = await res.json();
+                currentPuzzleToken = data.token;
+                
+                const container = document.getElementById('puzzleContainer');
+                
+                if (currentPuzzleType === 'slider') {
+                    container.innerHTML = `
+                        <div style="position:relative; display:inline-block;">
+                            <img src="data:image/png;base64,${data.image_bg}" style="border-radius:10px; width:300px;">
+                            <div id="sliderPiece" style="position:absolute; top:50%; left:0; transform:translateY(-50%); cursor:grab;">
+                                <img src="data:image/png;base64,${data.piece}" style="border:2px solid #00b4d8; border-radius:6px;">
+                            </div>
+                        </div>
+                        <input type="range" id="sliderControl" min="0" max="260" value="0" style="width:300px; margin-top:10px; accent-color:#00b4d8;">
+                        <button type="button" onclick="verifyCaptcha()" style="margin-top:8px; background:#00b4d8; color:#fff; border:none; border-radius:8px; padding:8px 20px; cursor:pointer; width:100%;">Valider ✓</button>`;
+                    
+                    document.getElementById('sliderControl').addEventListener('input', function() {
+                        document.getElementById('sliderPiece').style.left = this.value + 'px';
+                    });
+                    window._captchaCorrectX = data.correct_x;
+                }
+                
+                if (currentPuzzleType === 'intrus') {
+                    const grid = data.images.map((img, i) => 
+                        `<img src="data:image/png;base64,${img}" onclick="selectIntrus(${i}, this)" 
+                        style="width:88px; border-radius:8px; cursor:pointer; border:2px solid transparent; transition:0.2s;">`
+                    ).join('');
+                    container.innerHTML = `
+                        <div style="font-size:13px; color:rgba(255,255,255,0.7); margin-bottom:10px; text-align:center;">&#128269; Clique sur l'image diff&eacute;rente des autres</div>
+                        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; justify-content:center;">${grid}</div>`;
+                    window._captchaSelected = null;
+                }
+                
+                if (currentPuzzleType === 'rotation') {
+                    container.innerHTML = `
+                        <div style="text-align:center;">
+                            <div style="font-size:13px; color:rgba(255,255,255,0.7); margin-bottom:10px;">&#128256; Remets l'image dans le bon sens</div>
+                            <img id="rotImg" src="data:image/png;base64,${data.image}" style="width:120px; border-radius:10px; transition:transform 0.1s;">
+                            <input type="range" id="rotControl" min="0" max="359" value="0" style="width:100%; margin-top:12px; accent-color:#00b4d8;">
+                            <button type="button" onclick="verifyCaptcha()" style="margin-top:8px; background:#00b4d8; color:#fff; border:none; border-radius:8px; padding:8px 20px; cursor:pointer; width:100%;">Valider ✓</button>
+                        </div>`;
+                    document.getElementById('rotControl').addEventListener('input', function() {
+                        document.getElementById('rotImg').style.transform = `rotate(${this.value}deg)`;
+                    });
+                    window._captchaCorrectAngle = data.correct_angle;
+                }
+            } catch (e) {
+                document.getElementById('puzzleContainer').innerHTML = "<div style='color:#2ed573; text-align:center; padding:16px; font-size:15px;'>&#9989; V&eacute;rification automatique activ&eacute;e</div>";
+                captchaVerified = true;
+            }
+        }
+
+        window.selectIntrus = function(index, el) {
+            document.querySelectorAll('#puzzleContainer img').forEach(i => i.style.borderColor = 'transparent');
+            el.style.borderColor = '#00b4d8';
+            window._captchaSelected = index;
+            verifyCaptcha();
+        };
+
+        async function verifyCaptcha() {
+            let body = {token: currentPuzzleToken};
+            if (currentPuzzleType === 'slider') body.x = parseInt(document.getElementById('sliderControl').value);
+            if (currentPuzzleType === 'intrus') { if (window._captchaSelected === null) return; body.index = window._captchaSelected; }
+            if (currentPuzzleType === 'rotation') body.angle = parseInt(document.getElementById('rotControl').value);
+            
+            const action = currentPuzzleType === 'slider' ? 'verify' : currentPuzzleType === 'intrus' ? 'verify_intrus' : 'verify_rotation';
+            const res = await fetch(`http://localhost:5006/puzzle/${action}`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            const status = document.getElementById('captchaStatus');
+            status.style.display = 'block';
+            if (data.success) {
+                captchaVerified = true;
+                document.getElementById('puzzleContainer').innerHTML = '<div style="text-align:center; color:#2ed573; font-size:20px; padding:10px;">&#9989; V&eacute;rification r&eacute;ussie !</div>';
+                status.style.color = '#2ed573';
+                status.textContent = 'Vous &ecirc;tes humain !';
+            } else {
+                status.style.color = '#ff4757';
+                status.textContent = '&#10060; Incorrect &mdash; Nouveau puzzle charg&eacute;';
+                setTimeout(loadPuzzle, 1000);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadPuzzle();
+            const params = new URLSearchParams(window.location.search);
+            const ref = params.get('ref') || params.get('referral');
+            if (ref) {
+                const input = document.getElementById('referralCode');
+                if (input) { input.value = ref.toUpperCase(); }
+            }
+        });
+    </script>
+    <!-- Cookie Banner -->
+    <div id="ptx-cookie-banner">
+        <div class="ptx-cookie-content">
+            <p>🍪 Protex utilise des cookies pour am&eacute;liorer votre exp&eacute;rience et s&eacute;curiser votre connexion.</p>
+        </div>
+        <div class="ptx-cookie-actions">
+            <button id="ptx-cookie-refuse" class="ptx-cookie-btn-refuse">Refuser</button>
+            <button id="ptx-cookie-accept" class="ptx-cookie-btn-accept">Accepter</button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const ptx_banner = document.getElementById('ptx-cookie-banner');
+            const ptx_acceptBtn = document.getElementById('ptx-cookie-accept');
+            const ptx_refuseBtn = document.getElementById('ptx-cookie-refuse');
+
+            if (localStorage.getItem('ptx_cookies')) {
+                ptx_banner.style.display = 'none';
+            }
+
+            ptx_acceptBtn.onclick = () => {
+                localStorage.setItem('ptx_cookies', 'accepted');
+                ptx_banner.style.display = 'none';
+            };
+
+            ptx_refuseBtn.onclick = () => {
+                localStorage.setItem('ptx_cookies', 'refused');
+                ptx_banner.style.display = 'none';
+            };
+        })();
+    </script>
+</body>
+</html>

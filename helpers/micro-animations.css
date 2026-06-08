@@ -1,0 +1,202 @@
+/* ============================================================
+   PROTEX — Global Micro-Animations  (helpers/micro-animations.css)
+   ============================================================ */
+
+/* ── Entrance Animations ─────────────────────────────────── */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideRight {
+    from { opacity: 0; transform: translateX(-24px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.88); }
+    to   { opacity: 1; transform: scale(1); }
+}
+@keyframes rotateIn {
+    from { opacity: 0; transform: rotate(-8deg) scale(0.9); }
+    to   { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+/* Utility classes */
+.anim-fade    { animation: fadeIn   0.4s ease both; }
+.anim-up      { animation: slideUp  0.5s ease both; }
+.anim-down    { animation: slideDown 0.4s ease both; }
+.anim-right   { animation: slideRight 0.45s ease both; }
+.anim-scale   { animation: scaleIn  0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+.anim-rotate  { animation: rotateIn 0.5s ease both; }
+
+/* Stagger delays */
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.16s; }
+.delay-3 { animation-delay: 0.24s; }
+.delay-4 { animation-delay: 0.32s; }
+.delay-5 { animation-delay: 0.40s; }
+.delay-6 { animation-delay: 0.48s; }
+
+/* ── Hover Lifts ─────────────────────────────────────────── */
+.hover-lift {
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                box-shadow 0.25s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 32px rgba(26,58,122,0.14);
+}
+.hover-lift-sm:hover {
+    transform: translateY(-3px);
+}
+
+/* ── Button Press ────────────────────────────────────────── */
+.btn-press {
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.btn-press:active {
+    transform: scale(0.96);
+    box-shadow: none !important;
+}
+
+/* ── Card entrance (Intersection Observer trigger) ───────── */
+.card-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.card-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── Shimmer / Skeleton ──────────────────────────────────── */
+@keyframes shimmer {
+    from { background-position: -400px 0; }
+    to   { background-position:  400px 0; }
+}
+.shimmer {
+    background: linear-gradient(90deg,
+        rgba(26,58,122,0.06) 25%,
+        rgba(26,58,122,0.12) 50%,
+        rgba(26,58,122,0.06) 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 8px;
+}
+
+/* ── Pulse / Ping badges ─────────────────────────────────── */
+@keyframes ping {
+    0%   { transform: scale(1); opacity: 1; }
+    75%, 100% { transform: scale(2); opacity: 0; }
+}
+.badge-ping {
+    position: relative;
+}
+.badge-ping::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: currentColor;
+    animation: ping 1.4s cubic-bezier(0,0,0.2,1) infinite;
+}
+
+/* ── Underline hover links ───────────────────────────────── */
+.link-animate {
+    position: relative;
+    text-decoration: none;
+}
+.link-animate::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0;
+    width: 0; height: 2px;
+    background: currentColor;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+}
+.link-animate:hover::after { width: 100%; }
+
+/* ── Icon spin ───────────────────────────────────────────── */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.icon-spin { animation: spin 0.8s linear infinite; }
+
+/* ── Number count-up wrapper ─────────────────────────────── */
+.count-up { display: inline-block; }
+
+/* ── Ripple effect ───────────────────────────────────────── */
+.ripple-btn {
+    position: relative;
+    overflow: hidden;
+}
+.ripple-btn .ripple-wave {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    background: rgba(255,255,255,0.35);
+    animation: rippleAnim 0.6s linear;
+    pointer-events: none;
+}
+@keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+}
+
+/* ── Floating label inputs ───────────────────────────────── */
+.float-label-wrap {
+    position: relative;
+}
+.float-label-wrap input,
+.float-label-wrap select,
+.float-label-wrap textarea {
+    padding-top: 22px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.float-label-wrap label {
+    position: absolute;
+    top: 14px; left: 14px;
+    font-size: 14px;
+    color: var(--text-secondary, #6b7a90);
+    pointer-events: none;
+    transition: top 0.2s ease, font-size 0.2s ease, color 0.2s ease;
+}
+.float-label-wrap input:focus ~ label,
+.float-label-wrap input:not(:placeholder-shown) ~ label,
+.float-label-wrap select:focus ~ label,
+.float-label-wrap textarea:focus ~ label,
+.float-label-wrap textarea:not(:placeholder-shown) ~ label {
+    top: 6px;
+    font-size: 10px;
+    color: var(--primary, #1A3A7A);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* ── Progress step indicator ─────────────────────────────── */
+@keyframes stepActivate {
+    from { transform: scale(0.7); }
+    to   { transform: scale(1); }
+}
+.step.active .step-circle {
+    animation: stepActivate 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ── Toast slide-in ──────────────────────────────────────── */
+@keyframes toastSlideIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+.toast-enter { animation: toastSlideIn 0.35s ease; }
+
+/* ── Auto-apply card-reveal via IntersectionObserver ──────── */
+/* (activated by micro-animations.js) */

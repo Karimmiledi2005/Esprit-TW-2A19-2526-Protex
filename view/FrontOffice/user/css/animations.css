@@ -1,0 +1,507 @@
+/* =============================================
+   animations.css — Animations pour Protex Front-Office
+   ============================================= */
+
+/* ===== KEYFRAMES ===== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInFromRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(0, 180, 216, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(0, 180, 216, 0.6); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes ripple {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
+@keyframes slideInFromRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    75% { transform: rotate(-3deg); }
+}
+
+/* ===== PAGE LOAD ANIMATIONS ===== */
+.page-header,
+.page-title-main,
+.page-breadcrumb {
+    animation: fadeInDown 0.5s ease-out;
+}
+
+.stats-grid {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.stats-grid .stat-card:nth-child(1) { animation: fadeInUp 0.5s ease-out 0.1s both; }
+.stats-grid .stat-card:nth-child(2) { animation: fadeInUp 0.5s ease-out 0.2s both; }
+.stats-grid .stat-card:nth-child(3) { animation: fadeInUp 0.5s ease-out 0.3s both; }
+.stats-grid .stat-card:nth-child(4) { animation: fadeInUp 0.5s ease-out 0.4s both; }
+
+.card {
+    animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+
+/* ===== STAT CARD ANIMATIONS ===== */
+.stat-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 180, 216, 0.15);
+}
+
+.stat-card .stat-icon {
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.stat-value {
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-value {
+    transform: scale(1.05);
+}
+
+/* ===== BUTTON ANIMATIONS ===== */
+.btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+}
+
+.btn:hover::after {
+    width: 200px;
+    height: 200px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 180, 216, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-outline:hover {
+    transform: translateY(-2px);
+    background: rgba(0, 180, 216, 0.1);
+}
+
+/* ===== NAV LINK ANIMATIONS ===== */
+.nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::before {
+    width: 80%;
+}
+
+.nav-link:hover {
+    color: var(--accent);
+    padding-left: 28px;
+}
+
+/* ===== AVATAR ANIMATIONS ===== */
+.avatar-btn,
+.dropdown-avatar,
+.avatar-placeholder {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.avatar-btn:hover,
+.dropdown-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+}
+
+.avatar-placeholder:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 180, 216, 0.3);
+}
+
+/* ===== DROPDOWN ANIMATION ===== */
+.avatar-dropdown {
+    transform-origin: top right;
+    animation: scaleIn 0.2s ease-out;
+}
+
+/* ===== CARD HOVER EFFECTS ===== */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(0, 180, 216, 0.3);
+}
+
+/* ===== TOAST ANIMATIONS ===== */
+.toast-notif {
+    animation: slideInFromRight 0.4s ease-out;
+}
+
+.toast-notif.show {
+    animation: slideInFromRight 0.4s ease-out;
+}
+
+.toast-notif i {
+    animation: pulse 1.5s infinite;
+}
+
+/* ===== FORM ANIMATIONS ===== */
+.form-control {
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    transform: scale(1.01);
+}
+
+.form-control.input-error {
+    animation: shake 0.5s ease;
+}
+
+.form-control.input-valid {
+    border-color: var(--success) !important;
+    box-shadow: 0 0 0 3px rgba(46, 196, 182, 0.15);
+}
+
+.field-error {
+    animation: fadeInDown 0.3s ease-out;
+    color: #ef4444;
+    font-size: 10px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* ===== PASSWORD STRENGTH ===== */
+.pwd-strength-fill {
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-switch {
+    transition: transform 0.3s ease;
+}
+
+.toggle-switch:hover {
+    transform: scale(1.05);
+}
+
+/* ===== SESSION ITEM ANIMATION ===== */
+.session-item {
+    transition: all 0.3s ease;
+}
+
+.session-item:hover {
+    background: rgba(0, 180, 216, 0.05);
+    padding-left: 16px;
+}
+
+/* ===== FLOATING ELEMENTS ===== */
+.float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.float-slow {
+    animation: float 4s ease-in-out infinite 0.5s;
+}
+
+.float-fast {
+    animation: float 2s ease-in-out infinite 0.25s;
+}
+
+/* ===== LOADING SPINNER ===== */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ===== SKELETON LOADING ===== */
+.skeleton {
+    background: linear-gradient(90deg, var(--glass-bg) 25%, var(--glass-border) 50%, var(--glass-bg) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-md);
+}
+
+.skeleton-text {
+    height: 14px;
+    margin-bottom: 8px;
+}
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* ===== ORB BACKGROUND ANIMATIONS ===== */
+.orb {
+    animation: float 8s ease-in-out infinite;
+}
+
+.orb-1 {
+    animation-duration: 10s;
+}
+
+.orb-2 {
+    animation-duration: 12s;
+    animation-delay: -4s;
+}
+
+.orb-3 {
+    animation-duration: 8s;
+    animation-delay: -2s;
+}
+
+/* ===== BADGE ANIMATIONS ===== */
+.badge {
+    transition: all 0.3s ease;
+}
+
+.badge:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== LINK HOVER EFFECTS ===== */
+a {
+    transition: color 0.2s ease;
+}
+
+/* ===== PROFILE SECTIONS ===== */
+.profile-section {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.section-header {
+    animation: fadeInDown 0.4s ease-out;
+}
+
+/* ===== INFO ITEM ===== */
+.info-item {
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background: rgba(0, 180, 216, 0.05);
+    padding-left: 8px;
+}
+
+/* ===== SINISTRES PANEL ===== */
+.sinistres-panel {
+    animation: slideInFromRight 0.4s ease-out;
+}
+
+/* ===== PROGRESS BARS ===== */
+.progress-bar {
+    transition: width 0.6s ease-out;
+}
+
+/* ===== TOOLTIP ===== */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--navy-mid);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* ===== PULSE RING ===== */
+@keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.4); }
+    70%  { box-shadow: 0 0 0 10px rgba(0, 180, 216, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0); }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.animate-fadeInDown  { animation: fadeInDown  0.55s ease both; }
+.animate-fadeInUp    { animation: fadeInUp    0.55s ease both; }
+.animate-fadeInLeft  { animation: fadeInLeft  0.55s ease both; }
+.animate-fadeInRight { animation: fadeInRight 0.55s ease both; }
+.animate-scaleIn     { animation: scaleIn     0.45s ease both; }
+.animate-float       { animation: float 3s ease-in-out infinite; }
+.animate-pulse-ring  { animation: pulse-ring 2s ease-out infinite; }
+.animate-spin        { animation: rotate 1s linear infinite; }
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+.hover-lift {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+}
+
+/* ===== TABLE ROWS STAGGER ===== */
+.table-row,
+tbody tr {
+    animation: fadeInLeft 0.4s ease both;
+}
+tbody tr:nth-child(1) { animation-delay: 0.05s; }
+tbody tr:nth-child(2) { animation-delay: 0.10s; }
+tbody tr:nth-child(3) { animation-delay: 0.15s; }
+tbody tr:nth-child(4) { animation-delay: 0.20s; }
+tbody tr:nth-child(5) { animation-delay: 0.25s; }
+
+/* ===== SIDEBAR NAV ITEMS STAGGER ===== */
+.nav-item {
+    animation: fadeInLeft 0.4s ease both;
+}
+.nav-item:nth-child(1)  { animation-delay: 0.06s; }
+.nav-item:nth-child(2)  { animation-delay: 0.09s; }
+.nav-item:nth-child(3)  { animation-delay: 0.12s; }
+.nav-item:nth-child(4)  { animation-delay: 0.15s; }
+.nav-item:nth-child(5)  { animation-delay: 0.18s; }
+.nav-item:nth-child(6)  { animation-delay: 0.21s; }
+.nav-item:nth-child(7)  { animation-delay: 0.24s; }
+.nav-item:nth-child(8)  { animation-delay: 0.27s; }
+
+/* ===== RESPONSIVE ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

@@ -1,0 +1,120 @@
+/* ============================================================
+   toast.css — Protex Toast Notification System
+   Slide-in from right, auto-dismiss with progress bar
+   ============================================================ */
+
+#protex-toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 380px;
+  pointer-events: none;
+}
+
+.protex-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: #fff;
+  pointer-events: all;
+  position: relative;
+  overflow: hidden;
+  animation: toast-slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.protex-toast.removing {
+  animation: toast-slide-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.protex-toast.success {
+  background: linear-gradient(135deg, rgba(46, 196, 182, 0.92), rgba(26, 158, 145, 0.92));
+}
+
+.protex-toast.error {
+  background: linear-gradient(135deg, rgba(230, 57, 70, 0.92), rgba(197, 33, 47, 0.92));
+}
+
+.protex-toast.warning {
+  background: linear-gradient(135deg, rgba(239, 159, 39, 0.92), rgba(214, 130, 10, 0.92));
+}
+
+.protex-toast.info {
+  background: linear-gradient(135deg, rgba(26, 58, 122, 0.92), rgba(43, 94, 167, 0.92));
+}
+
+.protex-toast-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.protex-toast-body {
+  flex: 1;
+}
+
+.protex-toast-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  margin-left: 8px;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.protex-toast-close:hover {
+  color: #fff;
+}
+
+/* — Progress bar — */
+.protex-toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 0 0 12px 12px;
+  animation: toast-progress linear both;
+}
+
+/* — Animations — */
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.85);
+  }
+}
+
+@keyframes toast-progress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
