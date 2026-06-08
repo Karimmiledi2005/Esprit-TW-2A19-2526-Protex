@@ -155,6 +155,9 @@ pip install -r requirements.txt
 > - **Windows** : Télécharger depuis https://github.com/UB-Mannheim/tesseract/wiki
 > - **Linux** : `sudo apt install tesseract-ocr tesseract-ocr-fra tesseract-ocr-ara`
 > - **Mac** : `brew install tesseract tesseract-lang`
+>
+> ⚠️ **Fichiers de langue (tessdata)** : Télécharger `ara.traineddata`, `eng.traineddata`, et `fra.traineddata`
+> depuis https://github.com/tesseract-ocr/tessdata et les placer dans le dossier `tessdata/` du projet.
 
 ### Étape 7 — Lancer les microservices IA
 

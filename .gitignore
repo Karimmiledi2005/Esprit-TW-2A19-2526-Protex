@@ -31,6 +31,8 @@ face_api/models/
 face_api/training_data/
 face_api/*.pkl
 face_api/*.yml
+tessdata/*
+!tessdata/.gitkeep
 *.pkl
 *.h5
 *.pb
